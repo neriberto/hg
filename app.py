@@ -8,6 +8,7 @@
 # -*- coding: utf-8 -*-
 
 import ConfigParser
+import datetime
 import fnmatch
 import hashlib
 import os.path
@@ -49,26 +50,30 @@ def getSample(URL):
     '''
     Download file from a URL
     '''
-    re = requests.get(URL, allow_redirects=True, timeout=300)
-    if re.status_code == 200:
-        if re.headers['Content-Disposition'] == None:
-            filename = URL.split('/')[-1].split('#')[0].split('?')[0]
-            if filename == None:
-                filename = URL.split('/')
+    try:
+        re = requests.get(URL, allow_redirects=True, timeout=100)
+        if re.status_code == 200:
+            if re.headers['Content-Disposition'] == None:
+                filename = URL.split('/')[-1].split('#')[0].split('?')[0]
+                if filename == None:
+                    filename = URL.split('/')
+            else:
+                Disposition = re.headers['Content-Disposition']
+                try:
+                    filename = Disposition.split('=')[1].split('"')[1]
+                except Exception:
+                    filename = Disposition.split('=')[1].split('"')[0]
+            return dict({"filename":filename,
+                         "content": re.content,
+                         "status_code": re.status_code})
         else:
-            Disposition = re.headers['Content-Disposition']
-            try:
-                filename = Disposition.split('=')[1].split('"')[1]
-            except:
-                filename = Disposition.split('=')[1].split('"')[0]
-        try:
-            return dict({"filename": filename, "content": re.content})
-        except Exception, e:
-            print "getSample %s" % e
-            return dict({"filename": None, "content": None})
-    else:
-        print "Status Code %d" % re.status_code
-        return dict({"filename": None, "content": None})
+            return dict({"filename": None,
+                         "content": None,
+                         "status_code": re.status_code})
+    except Exception:
+        return dict({"filename": None,
+                     "content": None,
+                     "status_code": "0"}) # 0 for timeout
 
 def doUpload(URL, fullpath):
     '''
@@ -104,9 +109,14 @@ def getURLS(URL, URLS):
     count = 0
     for url in URLS:
         count += 1
-        print "%d - %s" %  (count, url[0:50])
+        data = getSample(url)
+        print "%04d - [%s] - Status Code:%s\t%s" %  (
+            count,
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            data['status_code'],
+            url[0:50])
         try:
-            data = getSample(url)
+            #data = getSample(url)
             if data['content'] != None:
                 md5 = hashlib.md5(data['content']).hexdigest()
                 try:
