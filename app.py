@@ -79,19 +79,20 @@ def doUpload(URL, fullpath):
     Uploaded = False
     Count = 0
     # TODO: Check first if the file is not empty
-    Files = {'file': (os.path.basename(fullpath), open(fullpath, 'rb'))}
-    # Try 3 times if receive upload error
-    while (not Uploaded) or (Count == 3):
-        r = requests.post("%smalware/add" % URL, files=Files)
-        # Returns 200 upload sucessfull, so remove
-        if r.status_code == 200:
-            os.remove(fullpath)
-            Uploaded = True
-        else:
-            Count += 1
-    if Count == 3:
-        print "Failure in send to VxCage in %s" % URL
-        sys.exit(-1)
+    if (os.path.getsize(fullpath) > 0):
+        Files = {'file': (os.path.basename(fullpath), open(fullpath, 'rb'))}
+        # Try 3 times if receive upload error
+        while (not Uploaded) or (Count == 3):
+            r = requests.post("%smalware/add" % URL, files=Files)
+            # Returns 200 upload sucessfull, so remove
+            if r.status_code == 200:
+                os.remove(fullpath)
+                Uploaded = True
+            else:
+                Count += 1
+        if Count == 3:
+            print "Failure in send to VxCage in %s" % URL
+            sys.exit(-1)
 
 
 def getURLS(URL, URLS):
@@ -131,9 +132,8 @@ def getURLS(URL, URLS):
                 pass
             # clean memory
             data = None
-        except Exception, e:
-            # Debug Exception, maybe Unknow error
-            print "Failure to process %s - %s" % (url, e)
+        except Exception:
+            # Failure to download, go to next 
             pass
 
 def main():
