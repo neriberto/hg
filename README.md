@@ -49,5 +49,5 @@ TODO
 * Work with VxCage authenticated
 * Analyze Zip Files, if  is a Zip, JAR or APK, so sends a tag to VxCage
 * Save URLs.
-*
-* [![endorse](https://api.coderwall.com/neriberto/endorsecount.png)](https://coderwall.com/neriberto)
+
+[![endorse](https://api.coderwall.com/neriberto/endorsecount.png)](https://coderwall.com/neriberto)
