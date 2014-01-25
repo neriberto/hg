@@ -10,6 +10,9 @@ from xml.dom.minidom import parseString
 
 class mdomainlist (object):
 
+    Name = "Malware Domain List"
+    URL = "http://www.malwaredomainlist.com/"
+
     def run(self):
         URLS = []
         # Download list from malc0de

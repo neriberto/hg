@@ -11,6 +11,7 @@ import ConfigParser
 import datetime
 import fnmatch
 import hashlib
+import json
 import os.path
 import requests
 import sys
@@ -23,9 +24,14 @@ def getConfig():
     if os.path.exists(fconf):
         cfg = ConfigParser.ConfigParser()
         cfg.read(fconf)
-        IP = cfg.get('vxcage', 'ip');
-        PORT = cfg.get('vxcage', 'port');
-        return "http://%s:%s/" % (IP, PORT)
+        VX = {}
+        VX["Enabled"]= cfg.get('vxcage', 'enabled')
+        VX["IP"] = cfg.get('vxcage', 'ip');
+        VX["PORT"] = cfg.get('vxcage', 'port');
+        Config = {}
+        Config["VxCage"] = {"Enabled":VX["Enabled"],
+                            "URL":"http://%s:%s/" % (VX["IP"], VX["PORT"])}
+        return Config
     else:
         sys.stderr.write("Cannot found config file %s\n" % fconf)
         return None
@@ -75,7 +81,7 @@ def getSample(URL):
                      "content": None,
                      "status_code": "0"}) # 0 for timeout
 
-def doUpload(URL, fullpath):
+def goVxCage(URL, fullpath):
     '''
     Send the sample in fullpath to VxCage
     '''
@@ -133,7 +139,7 @@ def getURLS(URL, URLS):
                     fp.write(data['content'])
                     fp.close()
                     # Send to VxCage Server
-                    doUpload(URL, fullpath)
+                    goVxCage(URL, fullpath)
                 else:
                     # File already downloaded
                     pass
@@ -151,14 +157,17 @@ def main():
     Main Procedure
     '''
     URLS = []
-    VxCageAddress = getConfig()
+    REPORT = []
+    Config = getConfig()
     mods = getModules()
     for mod in mods:
         lista = mod.run()
         if lista != None:
-            URLS += lista
+            URLS.append(lista)
+        REPORT.append({"Source":mod.Name,"URL":mod.URL,"URLS":lista})
 
-    getURLS(VxCageAddress, URLS)
+    if Config["VxCage"]["Enabled"]== "yes":
+        getURLS(Config["VxCage"]["URL"], URLS)
 
 if __name__ == "__main__":
     try:

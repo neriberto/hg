@@ -42,9 +42,11 @@ Configure HG using the hg.conf in conf directory, it is simple see below:
 
 
 
+
 TODO
 ----
 
+* Send samples to [Cuckoo SandBox](http://www.cuckoosandbox.org/)
 * Send samples to [Aleph](https://github.com/merces/aleph)
 * Work with VxCage authenticated
 * Analyze Zip Files, if  is a Zip, JAR or APK, so sends a tag to VxCage

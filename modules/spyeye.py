@@ -10,10 +10,13 @@ import requests
 
 class spyeye(object):
 
+    Name = "SpyEyE"
+    URL = "https://spyeyetracker.abuse.ch"
+
     def run(self):
         URLS = []
         try:
-            r = requests.get("https://spyeyetracker.abuse.ch/monitor.php?urlfeed=binaryurls")
+            r = requests.get("https://spyeyetracker.abuse.ch/monitor.php?rssfeed=tracker")
             content = r.content
             if content != None:
                 bk = content.replace("\n","")
