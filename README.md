@@ -22,6 +22,13 @@ Malwares Sources:
 Requirements
 ------------
 
+Python 2.7 is required to run HG. To install the project dependencies do this:
+
+	pip install -r requirements.txt
+
+Configuration
+-------------
+
 HG only analyzes the malwares sources and downloads the samples, so to store the samples, HG use the VxCage, then first is needed to install it.
 
 Configure HG using the hg.conf in conf directory, it is simple see below:
@@ -32,6 +39,8 @@ Configure HG using the hg.conf in conf directory, it is simple see below:
 	port = 8080
 	username =
 	password =
+
+
 
 TODO
 ----
