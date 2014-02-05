@@ -26,11 +26,22 @@ def getConfig():
         cfg.read(fconf)
         VX = {}
         VX["Enabled"]= cfg.get('vxcage', 'enabled')
-        VX["IP"] = cfg.get('vxcage', 'ip');
-        VX["PORT"] = cfg.get('vxcage', 'port');
+        VX["connection"] = cfg.get('vxcage', 'connection');
+
+        Cuckoo = {}
+        Cuckoo["Enabled"]= cfg.get('cuckoo', 'enabled')
+        Cuckoo["connection"] = cfg.get('cuckoo', 'connection');
+
+        Mongo = {}
+        Mongo["Enabled"]= cfg.get('mongodb', 'enabled')
+        Mongo["host"] = cfg.get('mongodb', 'host');
+        Mongo["port"] = cfg.get('mongodb', 'port');
+
         Config = {}
-        Config["VxCage"] = {"Enabled":VX["Enabled"],
-                            "URL":"http://%s:%s/" % (VX["IP"], VX["PORT"])}
+        Config["VxCage"] = VX
+	Config["Cuckoo"] = Cuckoo
+	Config["Mongo"] = Mongo
+
         return Config
     else:
         sys.stderr.write("Cannot found config file %s\n" % fconf)
@@ -122,7 +133,7 @@ def getURLS(URL, URLS):
             data['status_code'],
             url[0:50])
         try:
-            #data = getSample(url)
+            data = getSample(url)
             if data['content'] != None:
                 md5 = hashlib.md5(data['content']).hexdigest()
                 try:
@@ -163,11 +174,13 @@ def main():
     for mod in mods:
         lista = mod.run()
         if lista != None:
-            URLS.append(lista)
+            URLS += lista
         REPORT.append({"Source":mod.Name,"URL":mod.URL,"URLS":lista})
 
+    print Config["VxCage"]
+
     if Config["VxCage"]["Enabled"]== "yes":
-        getURLS(Config["VxCage"]["URL"], URLS)
+        getURLS(Config["VxCage"]["connection"], URLS)
 
 if __name__ == "__main__":
     try:
