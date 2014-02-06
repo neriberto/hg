@@ -92,7 +92,7 @@ def getSample(URL):
                      "content": None,
                      "status_code": "0"}) # 0 for timeout
 
-def goVxCage(URL, fullpath):
+def addVxCage(URL, fullpath):
     '''
     Send the sample in fullpath to VxCage
     '''
@@ -108,7 +108,7 @@ def goVxCage(URL, fullpath):
             r = requests.post("%smalware/add" % URL, files=Files)
             # Returns 200 upload sucessfull, so remove
             if r.status_code == 200:
-                os.remove(fullpath)
+                #os.remove(fullpath)
                 Uploaded = True
             else:
                 Count += 1
@@ -116,6 +116,20 @@ def goVxCage(URL, fullpath):
             print "Failure in send to VxCage in %s" % URL
             sys.exit(-1)
 
+def findVxCage(MD5, URL):
+    Data = {'md5': MD5}
+    try :
+        r = requests.post("%smalware/find" % URL, data=Data)
+        return r.status_code
+    except:
+        return -1
+
+def saveFile(data):
+    fullpath = os.path.join('/tmp/', data['filename'])
+    fp = open(fullpath, "wb")
+    fp.write(data['content'])
+    fp.close()
+    return fullpath
 
 def getURLS(URL, URLS):
     '''
@@ -135,28 +149,13 @@ def getURLS(URL, URLS):
         try:
             data = getSample(url)
             if data['content'] != None:
+                fullpath = saveFile(data)
                 md5 = hashlib.md5(data['content']).hexdigest()
-                try:
-                    Data = {'md5': md5}
-                    r = requests.post('%smalware/find' % URL, data=Data)
-                except:
-                    print "Failure to query VxCage, exiting"
-                    sys.exit(-1)
                 # Returns 404 file don't exist in VxCage
-                if r.status_code == 404:
-                    # save in temp to upload to VxCage
-                    fullpath = os.path.join('/tmp/', data['filename'])
-                    fp = open(fullpath, "wb")
-                    fp.write(data['content'])
-                    fp.close()
+                if findVxCage(md5, URL) == 404:
                     # Send to VxCage Server
-                    goVxCage(URL, fullpath)
-                else:
-                    # File already downloaded
-                    pass
-            else:
-                # Empty content after download
-                pass
+                    addVxCage(URL, fullpath)
+                os.remove(fullpath)
             # clean memory
             data = None
         except Exception:
