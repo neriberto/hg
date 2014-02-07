@@ -11,7 +11,6 @@ import ConfigParser
 import datetime
 import fnmatch
 import hashlib
-import json
 import os.path
 import requests
 import sys
@@ -63,6 +62,22 @@ def getModules():
                     Modules.append(class_())
     return Modules
 
+def getProcessors():
+    '''
+    Loads all processor for Malware Repository
+    '''
+    Processors = []
+    for arg, dirname, names in os.walk('processors'):
+        for name in fnmatch.filter(names, "*.py"):
+            if name != "__init__.py":
+                name = "processors.%s" % name.split(".py")[0]
+                processor = __import__(name, globals(), locals(), [''])
+                components = name.split('.')
+                for comp in components[1:]:
+                    class_ = getattr(processor, comp)
+                    Processors.append(class_())
+    return Processors
+
 def getSample(URL):
     '''
     Download file from a URL
@@ -92,38 +107,6 @@ def getSample(URL):
                      "content": None,
                      "status_code": "0"}) # 0 for timeout
 
-def addVxCage(URL, fullpath):
-    '''
-    Send the sample in fullpath to VxCage
-    '''
-    # TODO: Execute file scanners to verify is the Zip File is a JAR or APK
-    # and sends the real file type as a TAG to VxCage
-    Uploaded = False
-    Count = 0
-    # TODO: Check first if the file is not empty
-    if (os.path.getsize(fullpath) > 0):
-        Files = {'file': (os.path.basename(fullpath), open(fullpath, 'rb'))}
-        # Try 3 times if receive upload error
-        while (not Uploaded) or (Count == 3):
-            r = requests.post("%smalware/add" % URL, files=Files)
-            # Returns 200 upload sucessfull, so remove
-            if r.status_code == 200:
-                #os.remove(fullpath)
-                Uploaded = True
-            else:
-                Count += 1
-        if Count == 3:
-            print "Failure in send to VxCage in %s" % URL
-            sys.exit(-1)
-
-def findVxCage(MD5, URL):
-    Data = {'md5': MD5}
-    try :
-        r = requests.post("%smalware/find" % URL, data=Data)
-        return r.status_code
-    except:
-        return -1
-
 def saveFile(data):
     fullpath = os.path.join('/tmp/', data['filename'])
     fp = open(fullpath, "wb")
@@ -131,12 +114,12 @@ def saveFile(data):
     fp.close()
     return fullpath
 
-def getURLS(URL, URLS):
+def getURLS(CONFIG, URLS):
     '''
     Works on a list of URLs
     '''
     print "URLs Encontradas: %s" % len(URLS)
-
+    Processors = getProcessors()
     count = 0
     for url in URLS:
         count += 1
@@ -147,14 +130,14 @@ def getURLS(URL, URLS):
             data['status_code'],
             url[0:50])
         try:
-            data = getSample(url)
+            #data = getSample(url)
             if data['content'] != None:
                 fullpath = saveFile(data)
                 md5 = hashlib.md5(data['content']).hexdigest()
-                # Returns 404 file don't exist in VxCage
-                if findVxCage(md5, URL) == 404:
-                    # Send to VxCage Server
-                    addVxCage(URL, fullpath)
+
+                for processor in Processors:
+                    processor.run(CONFIG, md5, fullpath)
+                    
                 os.remove(fullpath)
             # clean memory
             data = None
@@ -176,10 +159,7 @@ def main():
             URLS += lista
         REPORT.append({"Source":mod.Name,"URL":mod.URL,"URLS":lista})
 
-    print Config["VxCage"]
-
-    if Config["VxCage"]["Enabled"]== "yes":
-        getURLS(Config["VxCage"]["connection"], URLS)
+    getURLS(Config, URLS)
 
 if __name__ == "__main__":
     try:
