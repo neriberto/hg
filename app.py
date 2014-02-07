@@ -130,19 +130,17 @@ def getURLS(CONFIG, URLS):
             data['status_code'],
             url[0:50])
         try:
-            #data = getSample(url)
             if data['content'] != None:
                 fullpath = saveFile(data)
-                md5 = hashlib.md5(data['content']).hexdigest()
-
-                for processor in Processors:
-                    processor.run(CONFIG, md5, fullpath)
-                    
+                if (os.path.getsize(fullpath) > 0):
+                    md5 = hashlib.md5(data['content']).hexdigest()
+                    for processor in Processors:
+                        processor.run(CONFIG, md5, fullpath)
                 os.remove(fullpath)
             # clean memory
             data = None
         except Exception:
-            # Failure to download, go to next 
+            # Failure in download, go to next 
             pass
 
 def main():
