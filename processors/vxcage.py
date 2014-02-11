@@ -13,7 +13,7 @@ class vxcage (object):
     def run(self, CONFIG, MD5, FULLPATH):
         if CONFIG['VxCage']['Enabled'] == "yes":
             if self.not_exist(MD5, CONFIG['VxCage']['connection']):
-                print self.add(CONFIG["VxCage"]['connection'], FULLPATH)
+                return self.add(CONFIG["VxCage"]['connection'], FULLPATH)
 
     def not_exist(self, MD5, URL):
         Data = {'md5': MD5}
