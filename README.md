@@ -34,22 +34,7 @@ HG only analyzes the malwares sources and downloads the samples, so to store the
 Configure HG using the hg.conf in conf directory, it is simple see below:
 
 	[vxcage]
-	https = no
-	ip = localhost
-	port = 8080
-	username =
-	password =
-
-
-
-
-TODO
-----
-
-* Send samples to [Cuckoo SandBox](http://www.cuckoosandbox.org/)
-* Send samples to [Aleph](https://github.com/merces/aleph)
-* Work with VxCage authenticated
-* Analyze Zip Files, if  is a Zip, JAR or APK, so sends a tag to VxCage
-* Save URLs.
+	enabled = yes
+	connection = http://localhost:8080/
 
 [![endorse](https://api.coderwall.com/neriberto/endorsecount.png)](https://coderwall.com/neriberto)
