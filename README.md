@@ -41,3 +41,7 @@ TODO
 * Work with VxCage authenticated
 * Analyze Zip Files, if  is a Zip, JAR or APK, so sends a tag to VxCage
 * Save URLs.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/neriberto/hg/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
