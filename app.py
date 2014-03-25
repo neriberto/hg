@@ -92,9 +92,9 @@ def getSample(URL):
             else:
                 Disposition = re.headers['Content-Disposition']
                 try:
-                    filename = Disposition.split('=')[1].split('"')[1]
+                    filename = Disposition.split('filename=')[1].split('"')[1]
                 except Exception:
-                    filename = Disposition.split('=')[1].split('"')[0]
+                    filename = Disposition.split('filename=')[1].split('"')[0]
             return dict({"filename":filename,
                          "content": re.content,
                          "status_code": re.status_code})
@@ -139,8 +139,9 @@ def getURLS(CONFIG, URLS):
                 os.remove(fullpath)
             # clean memory
             data = None
-        except Exception:
+        except Exception, e:
             # Failure in download, go to next 
+            print "Exception: %s" % (e)
             pass
 
 def main():
