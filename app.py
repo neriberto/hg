@@ -11,6 +11,7 @@ import ConfigParser
 import datetime
 import fnmatch
 import hashlib
+import magic
 import os.path
 import requests
 import sys
@@ -114,6 +115,16 @@ def saveFile(data):
     fp.close()
     return fullpath
 
+def getType(data):
+    try:
+        ms = magic.open(magic.MAGIC_MIME)
+        ms.load()
+        filetype = ms.buffer(data)
+        return filetype.split(";")[0]
+    except Exception, e:
+        print "getType %s" % (e)
+        sys.exit(-1)
+
 def getURLS(CONFIG, URLS):
     '''
     Works on a list of URLs
@@ -132,10 +143,11 @@ def getURLS(CONFIG, URLS):
         try:
             if data['content'] != None:
                 fullpath = saveFile(data)
+                filetype = getType(data['content'])
                 if (os.path.getsize(fullpath) > 0):
                     md5 = hashlib.md5(data['content']).hexdigest()
                     for processor in Processors:
-                        processor.run(CONFIG, md5, fullpath)
+                        processor.run(CONFIG, md5, fullpath, filetype)
                 os.remove(fullpath)
             # clean memory
             data = None
