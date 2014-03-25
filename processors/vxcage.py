@@ -10,7 +10,7 @@ import requests
 
 class vxcage (object):
 
-    def run(self, CONFIG, MD5, FULLPATH):
+    def run(self, CONFIG, MD5, FULLPATH, FILETYPE):
         if CONFIG['VxCage']['Enabled'] == "yes":
             if self.not_exist(MD5, CONFIG['VxCage']['connection']):
                 return self.add(CONFIG["VxCage"]['connection'], FULLPATH)
