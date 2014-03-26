@@ -84,9 +84,14 @@ def getSample(URL):
     Download file from a URL
     '''
     try:
-        re = requests.get(URL, allow_redirects=True, timeout=100)
+        headers = {'User-Agent':'Mozilla/5.0'}
+        re = requests.get(URL, allow_redirects=True, timeout=100, headers=headers)
         if re.status_code == 200:
-            if re.headers['Content-Disposition'] == None:
+            UseDisp = False
+            for item in re.headers:
+                if item.lower() == "content-disposition":
+                    UseDisp = True
+            if not UseDisp:
                 filename = URL.split('/')[-1].split('#')[0].split('?')[0]
                 if filename == None:
                     filename = URL.split('/')
@@ -103,7 +108,8 @@ def getSample(URL):
             return dict({"filename": None,
                          "content": None,
                          "status_code": re.status_code})
-    except Exception:
+    except Exception, e:
+        print "getSample: %s" % (e)
         return dict({"filename": None,
                      "content": None,
                      "status_code": "0"}) # 0 for timeout
@@ -153,7 +159,7 @@ def getURLS(CONFIG, URLS):
             data = None
         except Exception, e:
             # Failure in download, go to next 
-            print "Exception: %s" % (e)
+            #print "getURLS: %s - %s" % (url, e)
             pass
 
 def main():
