@@ -17,6 +17,7 @@ class cuckoo (object):
         self.TYPES.append("application/x-executable")
         self.TYPES.append("application/pdf")
         self.TYPES.append("application/msword")
+        self.TYPES.append("application/octet-stream")
 
     def run(self, CONFIG, MD5, FULLPATH, FILETYPE):
         try:
@@ -24,8 +25,6 @@ class cuckoo (object):
                 if FILETYPE in self.TYPES:
                     if self.not_exist(MD5, CONFIG['Cuckoo']['connection']):
                         return self.add(CONFIG["Cuckoo"]['connection'], FULLPATH)
-                else:
-                    print FILETYPE
         except Exception, e:
             print "Cuckoo:run %s" % (e)
             return False
