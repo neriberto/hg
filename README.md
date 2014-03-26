@@ -40,8 +40,8 @@ Configure HG using the hg.conf in conf directory, it is simple see below:
 	connection = http://localhost:8080/
 
 Now HG can send samples to [Cuckoo Sandbox] (https://github.com/cuckoobox/cuckoo), in hg.conf you
-can configure this integration, just the the address for your cuckoo installation, remember you
-need the run the Cuckoo API, not the web interface, configuration example:
+can configure this integration, just set the address for your cuckoo installation, remember, to do this you
+need to run the Cuckoo API, not the web interface, see configuration example bellow:
 
 	[cuckoo]
 	enable = yes
