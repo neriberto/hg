@@ -16,6 +16,7 @@ Features
 Malwares Sources:
 
 * [Malc0de](http://malc0de.com/)
+* [Malware Blacklist](http://www.malwareblacklist.com)
 * [Malware Domain List](http://www.malwaredomainlist.com/)
 * [Spyeye Tracker](https://spyeyetracker.abuse.ch/)
 * [Zeus Tracker](https://zeustracker.abuse.ch/)
@@ -52,6 +53,6 @@ Contributions
 
 And the thanks go to:
 
-* [Silvio Grunge](https://github.com/SlvioGrunge)
+* [Silvio Grunge](https://github.com/SilvioGrunge)
 
 [![endorse](https://api.coderwall.com/neriberto/endorsecount.png)](https://coderwall.com/neriberto)

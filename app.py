@@ -12,15 +12,15 @@ import datetime
 import fnmatch
 import hashlib
 import magic
-import os.path
+import os
 import requests
 import sys
 
-def getConfig():
+def getConfig(directory):
     '''
     Read config file and return VxCage URL
     '''
-    fconf = "conf/hg.conf"
+    fconf = os.path.join(directory, "conf/hg.conf")
     if os.path.exists(fconf):
         cfg = ConfigParser.ConfigParser()
         cfg.read(fconf)
@@ -47,12 +47,13 @@ def getConfig():
         sys.stderr.write("Cannot found config file %s\n" % fconf)
         return None
 
-def getModules():
+def getModules(directory):
     '''
     Loads all modules of Malware Repository
     '''
     Modules = []
-    for arg, dirname, names in os.walk('modules'):
+    WALK_IN = os.path.join(directory, 'modules')
+    for arg, dirname, names in os.walk(WALK_IN):
         for name in fnmatch.filter(names, "*.py"):
             if name != "__init__.py":
                 name = "modules.%s" % name.split(".py")[0]
@@ -63,12 +64,13 @@ def getModules():
                     Modules.append(class_())
     return Modules
 
-def getProcessors():
+def getProcessors(directory):
     '''
     Loads all processor for Malware Repository
     '''
     Processors = []
-    for arg, dirname, names in os.walk('processors'):
+    WALK_IN = os.path.join(directory, 'processors')
+    for arg, dirname, names in os.walk(WALK_IN):
         for name in fnmatch.filter(names, "*.py"):
             if name != "__init__.py":
                 name = "processors.%s" % name.split(".py")[0]
@@ -131,12 +133,12 @@ def getType(data):
         print "getType %s" % (e)
         sys.exit(-1)
 
-def getURLS(CONFIG, URLS):
+def getURLS(DIRECTORY, CONFIG, URLS):
     '''
     Works on a list of URLs
     '''
     print "URLs Encontradas: %s" % len(URLS)
-    Processors = getProcessors()
+    Processors = getProcessors(DIRECTORY)
     count = 0
     for url in URLS:
         count += 1
@@ -168,15 +170,16 @@ def main():
     '''
     URLS = []
     REPORT = []
-    Config = getConfig()
-    mods = getModules()
+    INSTALLDIR = os.path.dirname(os.path.realpath(__file__))
+    Config = getConfig(INSTALLDIR)
+    mods = getModules(INSTALLDIR)
     for mod in mods:
         lista = mod.run()
         if lista != None:
             URLS += lista
         REPORT.append({"Source":mod.Name,"URL":mod.URL,"URLS":lista})
 
-    getURLS(Config, URLS)
+    getURLS(INSTALLDIR, Config, URLS)
 
 if __name__ == "__main__":
     try:
