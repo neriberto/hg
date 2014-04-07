@@ -8,26 +8,26 @@
 import requests
 from xml.dom.minidom import parseString
 
-class mdomainlist (object):
+class mblacklist (object):
 
-    Name = "Malware Domain List"
-    URL = "http://www.malwaredomainlist.com/"
+    Name = "Malware Blacklist"
+    URL = "http://www.malwareblacklist.com/"
 
     def run(self):
         URLS = []
         # Download list from malc0de
-        content = self.Download("http://www.malwaredomainlist.com/hostslist/mdl.xml")
+        content = self.Download("http://www.malwareblacklist.com/mbl.xml")
         if content != None:
             bk = content.replace("\n", "")
             dom = parseString(bk.encode("utf-8"))
+            cont = 1
             for node in dom.getElementsByTagName("description"):
                 # extract the URLs
-                line = node.toxml().replace("<description>", "")
-                info = line.replace("</description", "")
-                try:
+                if cont > 1:
+                    line = node.toxml().replace("<description>", "")
+                    info = line.replace("</description", "")
                     URLS.append("http://" + info.split(',')[0].split(':')[1][1:])
-                except:
-                    pass
+                cont = cont + 1
             return URLS
         else:
             return None
