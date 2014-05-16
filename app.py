@@ -24,9 +24,14 @@ def getConfig(directory):
     if os.path.exists(fconf):
         cfg = ConfigParser.ConfigParser()
         cfg.read(fconf)
+
         VX = {}
         VX["Enabled"]= cfg.get('vxcage', 'enabled')
         VX["connection"] = cfg.get('vxcage', 'connection');
+
+        Viper = {}
+        Viper["Enabled"] = cfg.get('viper', 'enabled')
+        Viper["connection"] = cfg.get('viper', 'connection');
 
         Cuckoo = {}
         Cuckoo["Enabled"]= cfg.get('cuckoo', 'enabled')
@@ -39,8 +44,9 @@ def getConfig(directory):
 
         Config = {}
         Config["VxCage"] = VX
-	Config["Cuckoo"] = Cuckoo
-	Config["Mongo"] = Mongo
+        Config["Cuckoo"] = Cuckoo
+    	Config["Mongo"] = Mongo
+        Config["Viper"] = Viper
 
         return Config
     else:
