@@ -129,9 +129,13 @@ def getType(data):
         ms.load()
         filetype = ms.buffer(data)
         return filetype.split(";")[0]
-    except Exception, e:
-        print "getType %s" % (e)
-        sys.exit(-1)
+    except:
+        try:
+            filetype = magic.from_buffer(data)
+            return filetype.split(";")[0]
+        except Exception, e:
+            print "getType %s" % (e)
+            sys.exit(-1)
 
 def getURLS(DIRECTORY, CONFIG, URLS):
     '''
