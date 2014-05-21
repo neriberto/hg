@@ -5,40 +5,27 @@
 
 # -*- coding: utf-8 -*-
 
-import requests
-from xml.dom.minidom import parseString
+from hg.core.feeds import Feeds
+from lxml import etree
 
-class mdomainlist (object):
+class mdomainlist(Feeds):
 
     Name = "Malware Domain List"
-    URL = "http://www.malwaredomainlist.com/"
+    URL = "http://www.malwaredomainlist.com/hostslist/mdl.xml"
 
     def run(self):
         URLS = []
-        # Download list from malc0de
-        content = self.Download("http://www.malwaredomainlist.com/hostslist/mdl.xml")
+        content = self.Download(self.URL)
         if content != None:
-            bk = content.replace("\n", "")
-            dom = parseString(bk.encode("utf-8"))
-            for node in dom.getElementsByTagName("description"):
-                # extract the URLs
-                line = node.toxml().replace("<description>", "")
-                info = line.replace("</description", "")
-                try:
-                    URLS.append("http://" + info.split(',')[0].split(':')[1][1:])
-                except:
-                    pass
+            children = ["title", "link", "description", "guid"]
+            main_node = "item"
+
+            tree = etree.parse(content)
+            for item in tree.findall("//%s" % main_node):
+                dict = {}
+                for field in children:
+                    dict[field] = item.findtext(field)
+                URLS.append(dict['description'].split(" ")[1][:-1])
             return URLS
         else:
-            return None
-
-    def Download(self, URL):
-        '''
-        :description : Execute download from a URL
-        '''
-        try:
-            r = requests.get(URL)
-            return r.content
-        except Exception, e:
-            print "Failure, %s" % e
             return None
