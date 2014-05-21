@@ -11,11 +11,11 @@ from lxml import etree
 class spyeye(Feeds):
 
     Name = "SpyEyE"
-    URL = "https://spyeyetracker.abuse.ch"
+    URL = "https://spyeyetracker.abuse.ch/monitor.php?rssfeed=tracker"
 
     def run(self):
         URLS = []
-        content = self.Download("https://spyeyetracker.abuse.ch/monitor.php?rssfeed=tracker")
+        content = self.Download(self.URL)
         if content != None:
             children = ["title", "link", "description", "guid"]
             main_node = "item"
@@ -25,7 +25,7 @@ class spyeye(Feeds):
                 dict = {}
                 for field in children:
                     dict[field] = item.findtext(field)
-                URLS.append(dict['description'].split(" ")[2])
+                URLS.append(dict['description'].split(" ")[2][:-1])
             return URLS
         else:
             return None

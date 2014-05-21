@@ -3,41 +3,29 @@
 # This file is part of HG - https://github.com/neriberto/hg
 # See the file 'docs/LICENSE' for copying permission.
 
+# -*- coding: utf-8 -*-
 
-from xml.dom.minidom import parseString
-import requests
+from hg.core.feeds import Feeds
+from lxml import etree
 
-class zeus(object):
+class zeus(Feeds):
 
     Name = "Zeus"
-    URL = "https://zeustracker.abuse.ch"
+    URL = "https://zeustracker.abuse.ch/monitor.php?urlfeed=binaries"
 
     def run(self):
         URLS = []
-        # Download list from Zeus tracker
-        content = self.Download("https://zeustracker.abuse.ch/monitor.php?urlfeed=binaries")
+        content = self.Download(self.URL)
         if content != None:
-            bk = content.replace("\n","")
-            # enforce ISO-8859-1 how in RSS
-            dom = parseString(bk.encode("ISO-8859-1"))
-            for node in dom.getElementsByTagName("title"):
-                # extract the URLs
-                line = node.toxml().replace("<title>", "")
-                info = line.replace("</title>", "")
-                try:
-                    URLS.append("http://" + info.split(',')[0].split(':')[0].split(' ')[0])
-                except:
-                    pass
-        URLS.pop(0)
-        return URLS
+            children = ["title", "link", "description", "guid"]
+            main_node = "item"
 
-    def Download(self, URL):
-        '''
-        :description : Execute download from a URL
-        '''
-        try:
-            r = requests.get(URL)
-            return r.content
-        except Exception, e:
-            print "Failure, %s" % e
+            tree = etree.parse(content)
+            for item in tree.findall("//%s" % main_node):
+                dict = {}
+                for field in children:
+                    dict[field] = item.findtext(field)
+                URLS.append(dict['description'].split(" ")[1][:-1])
+            return URLS
+        else:
             return None
