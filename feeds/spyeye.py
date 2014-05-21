@@ -5,32 +5,27 @@
 
 # -*- coding: utf-8 -*-
 
-from xml.dom.minidom import parseString
-import requests
+from hg.core.feeds import Feeds
+from lxml import etree
 
-class spyeye(object):
+class spyeye(Feeds):
 
     Name = "SpyEyE"
     URL = "https://spyeyetracker.abuse.ch"
 
     def run(self):
         URLS = []
-        try:
-            r = requests.get("https://spyeyetracker.abuse.ch/monitor.php?rssfeed=tracker")
-            content = r.content
-            if content != None:
-                bk = content.replace("\n","")
-                dom = parseString(bk.encode("utf-8"))
-                for node in dom.getElementsByTagName("title"):
-                    # extract the URLs
-                    line = node.toxml().replace("<title>", "")
-                    info = line.replace("</title>", "")
-                    try:
-                        URLS.append("http://" + info.split(',')[0].split(':')[0].split(' ')[0])
-                    except:
-                        pass
-            URLS.pop(0)
+        content = self.Download("https://spyeyetracker.abuse.ch/monitor.php?rssfeed=tracker")
+        if content != None:
+            children = ["title", "link", "description", "guid"]
+            main_node = "item"
+
+            tree = etree.parse(content)
+            for item in tree.findall("//%s" % main_node):
+                dict = {}
+                for field in children:
+                    dict[field] = item.findtext(field)
+                URLS.append(dict['description'].split(" ")[2])
             return URLS
-        except Exception:
-            # Sometimes Spyeye give us 502 status code :)
-            pass
+        else:
+            return None
