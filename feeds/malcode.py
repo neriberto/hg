@@ -4,10 +4,10 @@
 # See the file 'docs/LICENSE' for copying permission.
 
 
-import requests
-from xml.dom.minidom import parseString
+from hg.core.feeds import Feeds
+from lxml import etree
 
-class malcode (object):
+class malcode (Feeds):
 
     Name = "Malc0de"
     URL = "http://malc0de.com/"
@@ -17,32 +17,15 @@ class malcode (object):
         # Download list from malc0de
         content = self.Download("http://malc0de.com/rss")
         if content != None:
-            bk = content.replace("\n", "")
-            # enforce ISO-8859-1 how in RSS
-            dom = None
-            try:
-                dom = parseString(bk.encode("ISO-8859-1"))
-            except:
-                dom = parseString(bk)
-                for node in dom.getElementsByTagName("description"):
-                    # extract the URLs
-                    line = node.toxml().replace("<description>", "")
-                    info = line.replace("</description", "")
-                    try:
-                        URLS.append("http://" + info.split(',')[0].split(':')[1][1:])
-                    except:
-                        pass
-                return URLS
-        else:
-            return None
+            children = ["title", "description", "link"]
+            main_node = "item"
 
-    def Download(self, URL):
-        '''
-        :description : Execute download from a URL
-        '''
-        try:
-            r = requests.get(URL)
-            return r.content
-        except Exception, e:
-            print "Failure, %s" % e
+            tree = etree.parse(content)
+            for item in tree.findall("//%s" % main_node):
+                dict = {}
+                for field in children:
+                    dict[field] = item.findtext(field)
+                URLS.append("http://%s" % dict['description'].split(' ')[1])
+            return URLS
+        else:
             return None
