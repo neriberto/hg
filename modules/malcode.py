@@ -24,15 +24,15 @@ class malcode (object):
                 dom = parseString(bk.encode("ISO-8859-1"))
             except:
                 dom = parseString(bk)
-            for node in dom.getElementsByTagName("description"):
-                # extract the URLs
-                line = node.toxml().replace("<description>", "")
-                info = line.replace("</description", "")
-                try:
-                    URLS.append("http://" + info.split(',')[0].split(':')[1][1:])
-                except:
-                    pass
-            return URLS
+                for node in dom.getElementsByTagName("description"):
+                    # extract the URLs
+                    line = node.toxml().replace("<description>", "")
+                    info = line.replace("</description", "")
+                    try:
+                        URLS.append("http://" + info.split(',')[0].split(':')[1][1:])
+                    except:
+                        pass
+                return URLS
         else:
             return None
 
