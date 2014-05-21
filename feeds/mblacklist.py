@@ -3,21 +3,21 @@
 # This file is part of HG - https://github.com/neriberto/hg
 # See the file 'docs/LICENSE' for copying permission.
 
+# -*- coding: utf-8 -*-
 
 from hg.core.feeds import Feeds
 from lxml import etree
 
-class mblacklist (Feeds):
+class mblacklist(Feeds):
 
     Name = "Malware Blacklist"
-    URL = "http://www.malwareblacklist.com/"
+    URL = "http://www.malwareblacklist.com/mbl.xml"
 
     def run(self):
         URLS = []
-        # Download list from malc0de
-        content = self.Download("http://www.malwareblacklist.com/mbl.xml")
+        content = self.Download(self.URL)
         if content != None:
-            children = ["title", "description", "link"]
+            children = ["title", "link", "description", "guid"]
             main_node = "item"
 
             tree = etree.parse(content)
@@ -25,7 +25,7 @@ class mblacklist (Feeds):
                 dict = {}
                 for field in children:
                     dict[field] = item.findtext(field)
-                URLS.append("http://%s" % dict['description'].split(' ')[1])
+                URLS.append(dict['description'].split(" ")[1][:-1])
             return URLS
         else:
             return None
