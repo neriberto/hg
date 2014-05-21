@@ -53,22 +53,22 @@ def getConfig(directory):
         sys.stderr.write("Cannot found config file %s\n" % fconf)
         return None
 
-def getModules(directory):
+def getFeeds(directory):
     '''
-    Loads all modules of Malware Repository
+    Loads all feeds of Malware Repository
     '''
-    Modules = []
-    WALK_IN = os.path.join(directory, 'modules')
+    Feeds = []
+    WALK_IN = os.path.join(directory, 'feeds')
     for arg, dirname, names in os.walk(WALK_IN):
         for name in fnmatch.filter(names, "*.py"):
             if name != "__init__.py":
-                name = "modules.%s" % name.split(".py")[0]
-                module = __import__(name, globals(), locals(), [''])
+                name = "feeds.%s" % name.split(".py")[0]
+                feed = __import__(name, globals(), locals(), [''])
                 components = name.split('.')
                 for comp in components[1:]:
-                    class_ = getattr(module, comp)
-                    Modules.append(class_())
-    return Modules
+                    class_ = getattr(feed, comp)
+                    Feeds.append(class_())
+    return Feeds
 
 def getProcessors(directory):
     '''
@@ -182,12 +182,12 @@ def main():
     REPORT = []
     INSTALLDIR = os.path.dirname(os.path.realpath(__file__))
     Config = getConfig(INSTALLDIR)
-    mods = getModules(INSTALLDIR)
-    for mod in mods:
-        lista = mod.run()
+    Feeds = getFeeds(INSTALLDIR)
+    for feed in Feeds:
+        lista = feed.run()
         if lista != None:
             URLS += lista
-        REPORT.append({"Source":mod.Name,"URL":mod.URL,"URLS":lista})
+        REPORT.append({"Source":feed.Name,"URL":feed.URL,"URLS":lista})
 
     getURLS(INSTALLDIR, Config, URLS)
 
