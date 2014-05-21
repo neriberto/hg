@@ -131,13 +131,15 @@ def saveFile(data):
 
 def getType(data):
     try:
+        # using python-magic from apt-get(Ubuntu)
         ms = magic.open(magic.MAGIC_MIME)
         ms.load()
         filetype = ms.buffer(data)
         return filetype.split(";")[0]
     except:
         try:
-            filetype = magic.from_buffer(data)
+            # from pip install libmagic, python-magic
+            filetype = magic.Magic(mime=True).from_buffer(data)
             return filetype.split(";")[0]
         except Exception, e:
             print "getType %s" % (e)
@@ -170,8 +172,6 @@ def getURLS(DIRECTORY, CONFIG, URLS):
             # clean memory
             data = None
         except Exception, e:
-            # Failure in download, go to next 
-            #print "getURLS: %s - %s" % (url, e)
             pass
 
 def main():
