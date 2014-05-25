@@ -53,39 +53,22 @@ def getConfig(directory):
         sys.stderr.write("Cannot found config file %s\n" % fconf)
         return None
 
-def getFeeds(directory):
+def LoadModules(Root, Directory):
     '''
-    Loads all feeds of Malware Repository
+    Loads all modules founded
     '''
-    Feeds = []
-    WALK_IN = os.path.join(directory, 'feeds')
-    for arg, dirname, names in os.walk(WALK_IN):
+    Modules = []
+    Walk_In = os.path.join(Root, Directory)
+    for arg, dirname, names in os.walk(Walk_In):
         for name in fnmatch.filter(names, "*.py"):
             if name != "__init__.py":
-                name = "feeds.%s" % name.split(".py")[0]
-                feed = __import__(name, globals(), locals(), [''])
-                components = name.split('.')
-                for comp in components[1:]:
-                    class_ = getattr(feed, comp)
-                    Feeds.append(class_())
-    return Feeds
-
-def getProcessors(directory):
-    '''
-    Loads all processor for Malware Repository
-    '''
-    Processors = []
-    WALK_IN = os.path.join(directory, 'processors')
-    for arg, dirname, names in os.walk(WALK_IN):
-        for name in fnmatch.filter(names, "*.py"):
-            if name != "__init__.py":
-                name = "processors.%s" % name.split(".py")[0]
+                name = "%s.%s" % (Directory, name.split(".py")[0])
                 processor = __import__(name, globals(), locals(), [''])
-                components = name.split('.')
-                for comp in components[1:]:
+                components = name.split('.')[1:]
+                for comp in components:
                     class_ = getattr(processor, comp)
-                    Processors.append(class_())
-    return Processors
+                    Modules.append(class_())
+    return Modules
 
 def getSample(URL):
     '''
@@ -93,7 +76,10 @@ def getSample(URL):
     '''
     try:
         headers = {'User-Agent':'Mozilla/5.0'}
-        re = requests.get(URL, allow_redirects=True, timeout=100, headers=headers)
+        re = requests.get(URL,
+                          allow_redirects=True,
+                          timeout=100,
+                          headers=headers)
         if re.status_code == 200:
             UseDisp = False
             for item in re.headers:
@@ -150,7 +136,7 @@ def getURLS(DIRECTORY, CONFIG, URLS):
     Works on a list of URLs
     '''
     print "URLs Encontradas: %s" % len(URLS)
-    Processors = getProcessors(DIRECTORY)
+    Processors = LoadModules(DIRECTORY, "processors")
     count = 0
     for url in URLS:
         count += 1
@@ -182,7 +168,7 @@ def main():
     REPORT = []
     INSTALLDIR = os.path.dirname(os.path.realpath(__file__))
     Config = getConfig(INSTALLDIR)
-    Feeds = getFeeds(INSTALLDIR)
+    Feeds = LoadModules(INSTALLDIR, "feeds")
     for feed in Feeds:
         lista = feed.run()
         if lista != None:
