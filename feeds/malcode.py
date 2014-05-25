@@ -25,7 +25,7 @@ class malcode (Feeds):
                 dict = {}
                 for field in children:
                     dict[field] = item.findtext(field)
-                URLS.append("http://%s" % dict['description'].split(' ')[1])
+                URLS.append("http://%s" % dict['description'].split(" ")[1][:-1])
             return URLS
         else:
             return None
