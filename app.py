@@ -18,7 +18,7 @@ import sys
 
 def getConfig(directory):
     '''
-    Read config file and return VxCage URL
+    Read config file and return Config
     '''
     fconf = os.path.join(directory, "conf/hg.conf")
     if os.path.exists(fconf):
@@ -45,7 +45,7 @@ def getConfig(directory):
         Config = {}
         Config["VxCage"] = VX
         Config["Cuckoo"] = Cuckoo
-    	Config["Mongo"] = Mongo
+        Config["Mongo"] = Mongo
         Config["Viper"] = Viper
 
         return Config

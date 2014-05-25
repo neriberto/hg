@@ -3,3 +3,4 @@ requests==2.2.1
 hashlib==20081119
 python-magic
 libmagic==1.0
+lxml
