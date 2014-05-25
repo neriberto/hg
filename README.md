@@ -19,6 +19,7 @@ Malwares Sources:
 * [Malware Blacklist](http://www.malwareblacklist.com)
 * [Malware Domain List](http://www.malwaredomainlist.com/)
 * [Spyeye Tracker](https://spyeyetracker.abuse.ch/)
+* [VXvault](http://vxvault.siri-urz.net/)
 * [Zeus Tracker](https://zeustracker.abuse.ch/)
 
 Requirements
