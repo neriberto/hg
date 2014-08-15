@@ -54,6 +54,6 @@ Contributions
 
 And the thanks go to:
 
-* [Silvio Grunge](https://github.com/SilvioGrunge)
+* [Silvio Giunge](https://github.com/SilvioGiunge)
 
 [![endorse](https://api.coderwall.com/neriberto/endorsecount.png)](https://coderwall.com/neriberto)
