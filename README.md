@@ -29,6 +29,10 @@ Python 2.7 is required to run HG. To install the project dependencies do this:
 
 	pip install -r requirements.txt
 
+If you are using Debian/Ubuntu maybe you will need install some packages first:
+
+    apt-get install libxml2-dev libxslt1-dev python2.7-dev
+
 Configuration
 -------------
 
