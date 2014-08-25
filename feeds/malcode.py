@@ -15,7 +15,7 @@ class malcode (Feeds):
     def run(self):
         URLS = []
         # Download list from malc0de
-        content = self.Download("http://malc0de.com/rss")
+        content = self.Download("http://malc0de.com/rss/")
         if content != None:
             children = ["title", "description", "link"]
             main_node = "item"
