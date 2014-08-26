@@ -12,20 +12,22 @@ class malcode (Feeds):
     Name = "Malc0de"
     URL = "http://malc0de.com/"
 
-    def run(self):
-        URLS = []
-        # Download list from malc0de
-        content = self.Download("http://malc0de.com/rss/")
-        if content != None:
-            children = ["title", "description", "link"]
-            main_node = "item"
+    def run(self, q):
+        try:
+            # Download list from malc0de
+            content = self.Download("http://malc0de.com/rss/")
+            if content != None:
+                children = ["title", "description", "link"]
+                main_node = "item"
 
-            tree = etree.parse(content)
-            for item in tree.findall("//%s" % main_node):
-                dict = {}
-                for field in children:
-                    dict[field] = item.findtext(field)
-                URLS.append("http://%s" % dict['description'].split(" ")[1][:-1])
-            return URLS
-        else:
-            return None
+                tree = etree.parse(content)
+                for item in tree.findall("//%s" % main_node):
+                    dic = {}
+                    for field in children:
+                        if field == "description":
+                            dic[field] = item.findtext(field)
+                            url = "http://%s" % dic[field].split(" ")[1][:-1]
+                            if len(url) > 8:
+                                q.put(url, True, 5)
+        except KeyboardInterrupt:
+            pass

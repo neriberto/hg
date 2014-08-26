@@ -13,19 +13,21 @@ class mdomainlist(Feeds):
     Name = "Malware Domain List"
     URL = "http://www.malwaredomainlist.com/hostslist/mdl.xml"
 
-    def run(self):
-        URLS = []
-        content = self.Download(self.URL)
-        if content != None:
-            children = ["title", "link", "description", "guid"]
-            main_node = "item"
+    def run(self, q):
+        try:
+            content = self.Download(self.URL)
+            if content != None:
+                children = ["title", "link", "description", "guid"]
+                main_node = "item"
 
-            tree = etree.parse(content)
-            for item in tree.findall("//%s" % main_node):
-                dict = {}
-                for field in children:
-                    dict[field] = item.findtext(field)
-                URLS.append(dict['description'].split(" ")[1][:-1])
-            return URLS
-        else:
-            return None
+                tree = etree.parse(content)
+                for item in tree.findall("//%s" % main_node):
+                    dic = {}
+                    for field in children:
+                        if field == "description":
+                            dic[field] = item.findtext(field)
+                            url = dic['description'].split(" ")[1][:-1]
+                            q.put(url, True, 5)
+
+        except KeyboardInterrupt:
+            pass
