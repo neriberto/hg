@@ -8,9 +8,11 @@ import hashlib
 import logging
 import magic
 import Queue
+import tempfile
 import time
 import threading
 import requests
+import shutil
 import sys
 from pprint import pprint
 
@@ -28,6 +30,7 @@ class hg(object):
         Path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../")
         self._Processors = self.LoadModules(Path, "processors")
         self._Feeds = self.LoadModules(Path, "feeds")
+
         # Configure the logging
         logging.basicConfig(level=logging.INFO,
                             format='%(asctime)s %(levelname)-8s %(message)s',
@@ -35,6 +38,8 @@ class hg(object):
                             stream=sys.stdout)
         # Configure requests to show only WARNING messages
         logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.addLevelName( logging.WARNING, "\033[1;31m%s\033[1;0m" % logging.getLevelName(logging.WARNING))
+        logging.addLevelName( logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
 
         fconf = os.path.join(Path, "conf/hg.conf")
         if os.path.exists(fconf):
@@ -80,7 +85,8 @@ class hg(object):
         return Modules
 
     def SaveFile(self, data):
-        path = os.path.join("/tmp/", data["filename"])
+        tempd = tempfile.mkdtemp()
+        path = os.path.join(tempd, data["filename"])
         fp = open(path, "wb")
         fp.write(data["content"])
         fp.close()
@@ -161,6 +167,7 @@ class hg(object):
                     for proc in self._Processors:
                         proc.run(self._Config, MD5, fpath, ftype)
                 os.remove(fpath)
+                shutil.rmtree(os.path.dirname(os.path.abspath(fpath)))
             data = None
             self._Fila.task_done()
 
