@@ -28,10 +28,14 @@ class hg(object):
         Path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../")
         self._Processors = self.LoadModules(Path, "processors")
         self._Feeds = self.LoadModules(Path, "feeds")
+        # Configure the logging
         logging.basicConfig(level=logging.INFO,
                             format='%(asctime)s %(levelname)-8s %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S',
                             stream=sys.stdout)
+        # Configure requests to show only WARNING messages
+        logging.getLogger("requests").setLevel(logging.WARNING)
+
         fconf = os.path.join(Path, "conf/hg.conf")
         if os.path.exists(fconf):
             cfg = ConfigParser.ConfigParser()
@@ -140,12 +144,12 @@ class hg(object):
         while not self._End_Process:
             try:
                 url = self._Fila.get(True, 5)
-            except Queue.empty:
+            except Queue.Empty:
                 continue
             data = self.Fetch(url)
             message = "Status Code: "+str(data["status_code"])+" URL: "+ url[0:50]
             if data["status_code"] != 200:
-                logging.error(message)
+                logging.warning(message)
             else:
                 logging.info(message)
 
@@ -183,7 +187,7 @@ class hg(object):
                         logging.error("Feed with errors: %s", feed.Name)
                         logging.error(e)
                         sys.exit(-1)
-                logging.info("Feeds retrieved, waiting")
+                logging.warning("Feeds retrieved, waiting")
                 time.sleep(30)
             except KeyboardInterrupt:
                 logging.info("Shutdown HG")
