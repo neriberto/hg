@@ -4,7 +4,7 @@ from hg import hg
 
 
 def main():
-    HG = hg(5)
+    HG = hg(10)
     HG.run()
 
 if __name__ == "__main__":

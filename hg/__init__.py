@@ -14,7 +14,6 @@ import threading
 import requests
 import shutil
 import sys
-from pprint import pprint
 
 class hg(object):
 
@@ -85,6 +84,10 @@ class hg(object):
         return Modules
 
     def SaveFile(self, data):
+        if len(data["filename"]) <= 0:
+            logging.debug("Not a valid filename")
+            print data
+            sys.exit(-1)
         tempd = tempfile.mkdtemp()
         path = os.path.join(tempd, data["filename"])
         fp = open(path, "wb")
@@ -132,6 +135,11 @@ class hg(object):
                         filename = Disposition.split('filename=')[1].split('"')[1]
                     except Exception:
                         filename = Disposition.split('filename=')[1].split('"')[0]
+
+                if len(filename) <= 0:
+                    logging.debug(URL)
+                    sys.exit(-1)
+
                 return dict({"filename":filename,
                              "content": re.content,
                              "status_code": re.status_code})
@@ -153,12 +161,15 @@ class hg(object):
             except Queue.Empty:
                 continue
             data = self.Fetch(url)
-            message = "Status Code: "+str(data["status_code"])+" URL: "+ url[0:50]
+            #message = "Status: "+str(data["status_code"])+" URL: "+ url[0:50]
+            if data["status_code"] == 200:
+                logging.info(url)
+            '''
             if data["status_code"] != 200:
                 logging.warning(message)
             else:
                 logging.info(message)
-
+            '''
             if data['content'] != None:
                 fpath = self.SaveFile(data)
                 ftype = self.GetFileType(data['content'])
@@ -184,8 +195,9 @@ class hg(object):
         while not self._End_Process:
             try:
                 if self._Fila.qsize() > 300:
-                    logging.info("Too many files to retrieve, waiting")
-                    time.sleep(30)
+                    logging.info("Status: %s files to download", self._Fila.qsize())
+                    logging.info("Status: Feeds waiting 1 minute")
+                    time.sleep(60)
                     continue
                 for feed in self._Feeds:
                     try:
@@ -194,8 +206,8 @@ class hg(object):
                         logging.error("Feed with errors: %s", feed.Name)
                         logging.error(e)
                         sys.exit(-1)
-                logging.warning("Feeds retrieved, waiting")
-                time.sleep(30)
+                logging.info("Status: Feeds retrieved, waiting 5 minutes")
+                time.sleep(60 * 5)
             except KeyboardInterrupt:
                 logging.info("Shutdown HG")
                 self._End_Process = True
