@@ -1,3 +1,4 @@
+import logging
 import urllib2
 from lxml import etree
 
@@ -12,6 +13,6 @@ class Feeds(object):
             r = urllib2.Request(URL, headers=head)
             return urllib2.urlopen(r)
         except Exception, e:
-            print "Failure, %s" % e
+            logging.error("Failure, %s" % e)
             return None
 
