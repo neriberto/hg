@@ -11,7 +11,7 @@ from lxml import etree
 class spyeye(Feeds):
 
     Name = "SpyEyE"
-    URL = "https://spyeyetracker.abuse.ch/monitor.php?rssfeed=tracker"
+    URL = "https://spyeyetracker.abuse.ch/monitor.php?rssfeed=binaryurls"
 
     def run(self, q):
         try:
