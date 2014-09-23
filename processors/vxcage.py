@@ -5,18 +5,29 @@
 
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import requests
 
 class vxcage (object):
 
+    TYPES = []
+
+    def __init__(self):
+        self.TYPES.append("application/x-dosexec")
+        self.TYPES.append("application/x-executable")
+        self.TYPES.append("application/pdf")
+        self.TYPES.append("application/msword")
+        self.TYPES.append("application/octet-stream")
+
     def run(self, CONFIG, MD5, FULLPATH, FILETYPE):
         try:
             if CONFIG['VxCage']['Enabled'] == "yes":
-                if self.not_exist(MD5, CONFIG['VxCage']['connection']):
-                    return self.add(CONFIG["VxCage"]['connection'], FULLPATH)
+                if FILETYPE in self.TYPES:
+                    if self.not_exist(MD5, CONFIG['VxCage']['connection']):
+                        return self.add(CONFIG["VxCage"]['connection'], FULLPATH)
         except Exception, e:
-            print "VxCage:run %s" % (e)
+            logging.error("VxCage:run %s" % e)
 
     def not_exist(self, MD5, URL):
         try:
@@ -24,7 +35,7 @@ class vxcage (object):
             r = requests.post("%smalware/find" % URL, data=Data)
             return (r.status_code == 404)
         except Exception, e:
-            print "VxCage:not_exist %s" % (e)
+            logging.error("VxCage:not_exist %s" % e)
             return False
 
     def add(self, URL, fullpath):
@@ -33,5 +44,5 @@ class vxcage (object):
             r = requests.post("%smalware/add" % URL, files=Files)
             return (r.status_code == 200)
         except Exception, e:
-            print "VxCage:add %s" % (e)
+            logging.error("VxCage:add %s" % e)
             return False

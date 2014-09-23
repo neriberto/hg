@@ -5,6 +5,7 @@
 
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import requests
 
@@ -26,7 +27,7 @@ class cuckoo (object):
                     if self.not_exist(MD5, CONFIG['Cuckoo']['connection']):
                         return self.add(CONFIG["Cuckoo"]['connection'], FULLPATH)
         except Exception, e:
-            print "Cuckoo:run %s" % (e)
+            logging.error("Cuckoo:run %s" % e)
             return False
 
     def not_exist(self, MD5, URL):
@@ -36,7 +37,7 @@ class cuckoo (object):
             r = requests.get(URL_PATH, data=Data)
             return (r.status_code == 404)
         except Exception, e:
-            print "Cuckoo:not_exist %s" % (e)
+            logging.error("Cuckoo:not_exist %s" % e)
             return False
 
     def add(self, URL, fullpath):
@@ -46,5 +47,5 @@ class cuckoo (object):
             r = requests.post(URL_PATH, files=Files)
             return (r.status_code == 200)
         except Exception, e:
-            print "Cuckoo:add %s" % (e)
+            logging.error("Cuckoo:add %s" % e)
             return False
