@@ -196,8 +196,8 @@ class hg(object):
             try:
                 if self._Fila.qsize() > 300:
                     logging.info("Status: %s files to download", self._Fila.qsize())
-                    logging.info("Status: Feeds waiting 1 minute")
-                    time.sleep(60)
+                    logging.info("Status: Feeds waiting 5 minute")
+                    time.sleep(60 * 5)
                     continue
                 for feed in self._Feeds:
                     try:
@@ -206,8 +206,8 @@ class hg(object):
                         logging.error("Feed with errors: %s", feed.Name)
                         logging.error(e)
                         sys.exit(-1)
-                logging.info("Status: Feeds retrieved, waiting 5 minutes")
-                time.sleep(60 * 5)
+                logging.info("Status: Feeds retrieved, waiting 30 minutes")
+                time.sleep(60 * 30)
             except KeyboardInterrupt:
                 logging.info("Shutdown HG")
                 self._End_Process = True
