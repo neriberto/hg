@@ -37,6 +37,7 @@ class hg(object):
                             stream=sys.stdout)
         # Configure requests to show only WARNING messages
         logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("HG").setLevel(logging.WARNING)
         logging.addLevelName( logging.WARNING, "\033[1;31m%s\033[1;0m" % logging.getLevelName(logging.WARNING))
         logging.addLevelName( logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
 
