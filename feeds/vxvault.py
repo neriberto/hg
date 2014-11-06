@@ -19,7 +19,7 @@ class vxvault(Feeds):
             URLS = []
             content = self.Download(self.URL)
             if content is not None:
-                URLS = content.read().split('\\')
+                URLS = content.read().split('\r\n')
                 URLS.pop(3)
                 URLS.pop(2)
                 URLS.pop(1)
