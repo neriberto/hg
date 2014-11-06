@@ -4,7 +4,7 @@ Hazardous Garbage
 Description
 -----------
 
-HG is a project to collect samples of malwares from many sources.
+HG is a project to collect samples of malwares from many sources(feeds).
 
 Features
 --------
@@ -13,7 +13,7 @@ Features
 * Is integrated with [VxCage] (https://github.com/cuckoobox/vxcage), so it's focused only in get the samples. 
 * Is integrated with [Cuckoo Sandbox] (https://github.com/cuckoobox/cuckoo).
 
-Malwares Sources:
+Malware's Sources(Feeds):
 
 * [Malc0de](http://malc0de.com/)
 * [Malware Blacklist](http://www.malwareblacklist.com)
@@ -21,6 +21,18 @@ Malwares Sources:
 * [Spyeye Tracker](https://spyeyetracker.abuse.ch/)
 * [VXvault](http://vxvault.siri-urz.net/)
 * [Zeus Tracker](https://zeustracker.abuse.ch/)
+
+Changelog
+---------
+
+Version 0.1 (v0.1)
+* A stable version with 6 malware's sources
+
+Version 0.2 (v0.2)
+* Fixed many issues with malware's feeds
+* Changed log format
+* Working with threads
+* Now running until kill by system or interrupted through keyboard(Ctrl+C)
 
 Requirements
 ------------
