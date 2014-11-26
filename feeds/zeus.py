@@ -32,5 +32,6 @@ class zeus(Feeds):
                             if len(url) > 8:
                                 q.put(url, True, 5)
         except KeyboardInterrupt:
-
             pass
+        except Exception as ex:
+            self.print_error(ex, content)

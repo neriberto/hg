@@ -36,3 +36,5 @@ class malcode(Feeds):
                                 q.put(url, True, 5)
         except KeyboardInterrupt:
             pass
+        except Exception as ex:
+            self.print_error(ex, content)

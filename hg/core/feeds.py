@@ -21,4 +21,7 @@ class Feeds(object):
             logging.error('Failure, %s' % e)
             return None
 
-
+    def print_error(self, ex, buff):
+        logging.error(ex)
+        print " "
+        print buff
