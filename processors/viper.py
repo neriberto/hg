@@ -27,8 +27,8 @@ class viper(object):
             if CONFIG['Viper']['Enabled'] == 'yes':
                 if FILETYPE in self.TYPES:
                     viper_conn = CONFIG['Viper']['connection']
-                    if self.not_exist(MD5, viper_conn):
-                        return self.add(viper_conn, FULLPATH)
+                    #if self.not_exist(MD5, viper_conn):
+                    return self.add(viper_conn, FULLPATH)
         except Exception, e:
             logging.error('Viper:run %s' % e)
 
