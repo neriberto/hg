@@ -25,7 +25,14 @@ class hg(object):
     _Feeds = []
     _Fila = Queue.Queue()
     _End_Process = False
+    '''
+    Number of Threads
+    '''
     _NUM_CONCURRENT_DOWNLOADS = 2
+    '''
+    Determine if need to download the URL
+    '''
+    _getData = False
 
     def __init__(self, downloads=2):
         self._NUM_CONCURRENT_DOWNLOADS = downloads
@@ -59,26 +66,31 @@ class hg(object):
             VX = {}
             VX['Enabled'] = cfg.get('vxcage', 'enabled')
             VX['connection'] = cfg.get('vxcage', 'connection')
+            if VX['Enabled'] == True:
+                self._getData = True
 
             Viper = {}
             Viper['Enabled'] = cfg.get('viper', 'enabled')
             Viper['connection'] = cfg.get('viper', 'connection')
+            if Viper['Enabled'] == True:
+                self._getData = True
 
             Cuckoo = {}
             Cuckoo['Enabled'] = cfg.get('cuckoo', 'enabled')
             Cuckoo['connection'] = cfg.get('cuckoo', 'connection')
-
-            Mongo = {}
-            Mongo['Enabled'] = cfg.get('mongodb', 'enabled')
-            Mongo['host'] = cfg.get('mongodb', 'host')
-            Mongo['port'] = cfg.get('mongodb', 'port')
+            if Cuckoo['Enabled'] == True:
+                self._getData = True
 
             self._Config['VxCage'] = VX
             self._Config['Cuckoo'] = Cuckoo
-            self._Config['Mongo'] = Mongo
             self._Config['Viper'] = Viper
 
-        logging.info('Initializing HG')
+
+        if self._getData == True:
+            logging.info('Initializing HG')
+        else:
+            logging.error('You must enable at least one module in the config file')
+            sys.exit(-1)
 
     def LoadModules(self, Root, Directory):
         Modules = []
@@ -174,10 +186,13 @@ class hg(object):
                 url = self._Fila.get(True, 5)
             except Queue.Empty:
                 continue
+   
+            # If any module that need to download the URL is enable,
+            # we stop here
+            if self._getData == False:
+                return
+
             data = self.Fetch(url)
-
-            # message = "Status: "+str(data["status_code"])+" URL: "+ url[0:50]
-
             if data['status_code'] == 200:
                 logging.info(url)
             if data['content'] != None:
