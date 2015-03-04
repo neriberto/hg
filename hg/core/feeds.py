@@ -1,12 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import feedparser
 import logging
+import re
 import urllib2
 from lxml import etree
 
 
 class Feeds(object):
+
+    Name = None
+    URL = None
 
     def Download(self, URL):
         '''
@@ -25,3 +30,27 @@ class Feeds(object):
         logging.error(ex)
         print " "
         print buff
+
+    def process_xml_list_desc(self, response):
+        feed = feedparser.parse(response)
+        urls = set()
+
+        for entry in feed.entries:
+            desc = entry.description
+            url = desc.split(' ')[1].rstrip(',')
+            if url == '':
+                continue
+            if url == '-':
+                url = desc.split(' ')[4].rstrip(',')
+            url = re.sub('&amp;', '&', url)
+            if not re.match('http', url):
+                url = 'http://' + url
+            urls.add(url)
+
+        return urls
+
+    def xml(self, q):
+        content = self.Download(self.URL)
+        urls = self.process_xml_list_desc(content)
+        for url in urls:
+            q.put(url, True, 5)

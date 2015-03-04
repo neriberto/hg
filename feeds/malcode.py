@@ -7,34 +7,14 @@
 # See the file 'docs/LICENSE' for copying permission.
 
 from hg.core.feeds import Feeds
-from lxml import etree
-
 
 class malcode(Feeds):
 
     Name = 'Malc0de'
-    URL = 'http://malc0de.com/'
+    URL = 'http://malc0de.com/rss'
 
     def run(self, q):
         try:
-
-            # Download list from malc0de
-
-            content = self.Download('http://malc0de.com/rss/')
-            if content is not None:
-                children = ['title', 'description', 'link']
-                main_node = 'item'
-
-                tree = etree.parse(content)
-                for item in tree.findall('//%s' % main_node):
-                    dic = {}
-                    for field in children:
-                        if field == 'description':
-                            dic[field] = item.findtext(field)
-                            url = 'http://%s' % (dic[field].split(' ')[1])[:-1]
-                            if len(url) > 8:
-                                q.put(url, True, 5)
+            self.xml(q)
         except KeyboardInterrupt:
             pass
-        except Exception as ex:
-            self.print_error(ex, content)

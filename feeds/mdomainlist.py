@@ -8,8 +8,6 @@
 
 
 from hg.core.feeds import Feeds
-from lxml import etree
-
 
 class mdomainlist(Feeds):
 
@@ -18,20 +16,6 @@ class mdomainlist(Feeds):
 
     def run(self, q):
         try:
-            content = self.Download(self.URL)
-            if content is not None:
-                children = ['title', 'link', 'description', 'guid']
-                main_node = 'item'
-
-                tree = etree.parse(content)
-                for item in tree.findall('//%s' % main_node):
-                    dic = {}
-                    for field in children:
-                        if field == 'description':
-                            dic[field] = item.findtext(field)
-                            url = (dic['description'].split(' ')[1])[:-1]
-                            q.put(url, True, 5)
+            self.xml(q)
         except KeyboardInterrupt:
             pass
-        except Exception as ex:
-            self.print_error(ex, content)
