@@ -66,19 +66,19 @@ class hg(object):
             VX = {}
             VX['Enabled'] = cfg.get('vxcage', 'enabled')
             VX['connection'] = cfg.get('vxcage', 'connection')
-            if VX['Enabled'] == True:
+            if VX['Enabled'] == "yes":
                 self._getData = True
 
             Viper = {}
             Viper['Enabled'] = cfg.get('viper', 'enabled')
             Viper['connection'] = cfg.get('viper', 'connection')
-            if Viper['Enabled'] == True:
+            if Viper['Enabled'] == "yes":
                 self._getData = True
 
             Cuckoo = {}
             Cuckoo['Enabled'] = cfg.get('cuckoo', 'enabled')
             Cuckoo['connection'] = cfg.get('cuckoo', 'connection')
-            if Cuckoo['Enabled'] == True:
+            if Cuckoo['Enabled'] == "yes":
                 self._getData = True
 
             self._Config['VxCage'] = VX
@@ -86,7 +86,7 @@ class hg(object):
             self._Config['Viper'] = Viper
 
 
-        if self._getData == True:
+        if self._getData:
             logging.info('Initializing HG')
         else:
             logging.error('You must enable at least one module in the config file')

@@ -1,6 +1,6 @@
 configparser==3.3.0r2
 requests==2.2.1
-hashlib==20081119
 python-magic
 libmagic==1.0
 lxml
+feedparser
