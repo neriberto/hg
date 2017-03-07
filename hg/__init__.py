@@ -110,7 +110,7 @@ class hg(object):
     def SaveFile(self, data):
         if len(data['filename']) <= 0:
             logging.debug('Not a valid filename')
-            print data
+            print(data)
             sys.exit(-1)
         tempd = tempfile.mkdtemp()
         path = os.path.join(tempd, data['filename'])

@@ -28,8 +28,8 @@ class Feeds(object):
 
     def print_error(self, ex, buff):
         logging.error(ex)
-        print " "
-        print buff
+        print(" ")
+        print(buff)
 
     def process_xml_list_desc(self, response):
         feed = feedparser.parse(response)
