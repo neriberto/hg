@@ -37,7 +37,7 @@ class vxcage(object):
             Data = {'md5': MD5}
             r = requests.post('%smalware/find' % URL, data=Data)
             return r.status_code == 404
-        except Exception, e:
+        except Exception as e:
             logging.error('VxCage:not_exist %s' % e)
             return False
 
@@ -47,6 +47,6 @@ class vxcage(object):
                      open(fullpath, 'rb'))}
             r = requests.post('%smalware/add' % URL, files=Files)
             return r.status_code == 200
-        except Exception, e:
+        except Exception as e:
             logging.error('VxCage:add %s' % e)
             return False

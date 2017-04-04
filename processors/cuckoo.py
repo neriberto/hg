@@ -40,7 +40,7 @@ class cuckoo(object):
             URL_PATH = '%sfiles/view/md5/%s' % (URL, MD5)
             r = requests.get(URL_PATH, data=Data)
             return r.status_code == 404
-        except Exception, e:
+        except Exception as e:
             logging.error('Cuckoo:not_exist %s' % e)
             return False
 
@@ -51,6 +51,6 @@ class cuckoo(object):
             URL_PATH = '%stasks/create/file' % URL
             r = requests.post(URL_PATH, files=Files)
             return r.status_code == 200
-        except Exception, e:
+        except Exception as e:
             logging.error('Cuckoo:add %s' % e)
             return False

@@ -36,7 +36,7 @@ class viper(object):
             Data = {'md5': MD5}
             r = requests.post('%sfile/find' % URL, data=Data)
             return r.status_code == 404
-        except Exception, e:
+        except Exception as e:
             logging.error('Viper:not_exist %s' % e)
             return False
 
@@ -46,6 +46,6 @@ class viper(object):
                      open(fullpath, 'rb'))}
             r = requests.post('%sfile/add' % URL, files=Files)
             return r.status_code == 200
-        except Exception, e:
+        except Exception as e:
             logging.error('Viper:add %s' % e)
             return False

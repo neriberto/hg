@@ -223,7 +223,7 @@ class hg(object):
                 for feed in self._Feeds:
                     try:
                         feed.run(self._Fila)
-                    except Exception, e:
+                    except Exception as e:
                         logging.error('Feed with errors: %s', feed.Name)
                         logging.error(e)
                         sys.exit(-1)
