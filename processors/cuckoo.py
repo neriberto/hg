@@ -30,7 +30,7 @@ class cuckoo(object):
                     cuckoo_conn = CONFIG['Cuckoo']['connection']
                     if self.not_exist(MD5, cuckoo_conn):
                         return self.add(cuckoo_conn, FULLPATH)
-        except Exception, e:
+        except Exception as e:
             logging.error('Cuckoo:run %s' % e)
             return False
 

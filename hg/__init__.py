@@ -132,7 +132,7 @@ class hg(object):
                 # from pip install libmagic, python-magic
 
                 filetype = magic.Magic(mime=True).from_buffer(data)
-            except Exception, e:
+            except Exception as e:
                 logging.error(e)
                 self._End_Process = True
 
@@ -190,7 +190,7 @@ class hg(object):
             if data['status_code'] == 200:
                 logging.info(url)
             if data['content'] is not None:
-                fpath = self.SaveFile(data)
+                fpath = self.SaveFile(data['content'])
                 ftype = self.GetFileType(data['content'])
                 if os.path.getsize(fpath) > 0:
                     MD5 = hashlib.md5(data['content']).hexdigest()
@@ -205,6 +205,7 @@ class hg(object):
         threads = []
 
         logging.info('Initializing Downloaders')
+        logging.info('Working threads: %s', self._NUM_CONCURRENT_DOWNLOADS)
         for unused_index in range(self._NUM_CONCURRENT_DOWNLOADS):
             thread = threading.Thread(target=self.Downloader)
             thread.daemon = True

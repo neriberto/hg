@@ -12,7 +12,7 @@ from hg.core.feeds import Feeds
 class vxvault(Feeds):
 
     Name = 'VxVault'
-    URL = 'http://vxvault.siri-urz.net/URL_List.php'
+    URL = 'http://vxvault.net/URL_List.php'
 
     def run(self, q):
         try:

@@ -29,7 +29,7 @@ class vxcage(object):
                     vxcage_conn = CONFIG['VxCage']['connection']
                     if self.not_exist(MD5, vxcage_conn):
                         return self.add(vxcage_conn, FULLPATH)
-        except Exception, e:
+        except Exception as e:
             logging.error('VxCage:run %s' % e)
 
     def not_exist(self, MD5, URL):

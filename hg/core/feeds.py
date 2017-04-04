@@ -12,6 +12,9 @@ class Feeds(object):
     Name = None
     URL = None
 
+    def __init(self):
+        logging.info('Reading feed %s in URL %s', self.Name, self.URL)
+
     def Download(self, URL):
         '''
         :description : Execute download from a URL
@@ -21,7 +24,7 @@ class Feeds(object):
             head = {'User-agent': 'Mozilla/5.0 (X11; U; Linux i686)'}
             r = urllib2.Request(URL, headers=head)
             return urllib2.urlopen(r)
-        except Exception, e:
+        except Exception as e:
             logging.error('Failure, %s' % e)
             return None
 

@@ -28,7 +28,7 @@ class viper(object):
                 if FILETYPE in self.TYPES:
                     viper_conn = CONFIG['Viper']['connection']
                     return self.add(viper_conn, FULLPATH)
-        except Exception, e:
+        except Exception as e:
             logging.error('Viper:run %s' % e)
 
     def not_exist(self, MD5, URL):
