@@ -8,6 +8,7 @@
 
 from hg.core.feeds import Feeds
 
+
 class malcode(Feeds):
 
     Name = 'Malc0de'

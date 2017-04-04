@@ -6,9 +6,7 @@
 # This file is part of HG - https://github.com/neriberto/hg
 # See the file 'docs/LICENSE' for copying permission.
 
-import logging
 from hg.core.feeds import Feeds
-from lxml import etree
 
 
 class spyeye(Feeds):

@@ -5,7 +5,6 @@ import feedparser
 import logging
 import re
 import urllib2
-from lxml import etree
 
 
 class Feeds(object):

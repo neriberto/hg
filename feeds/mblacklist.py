@@ -8,6 +8,7 @@
 
 from hg.core.feeds import Feeds
 
+
 class mblacklist(Feeds):
 
     Name = 'Malware Blacklist'

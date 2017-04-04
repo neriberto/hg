@@ -9,6 +9,7 @@
 
 from hg.core.feeds import Feeds
 
+
 class mdomainlist(Feeds):
 
     Name = 'Malware Domain List'

@@ -45,8 +45,8 @@ class hg(object):
         # Configure the logging
 
         logging.basicConfig(level=logging.INFO,
-                            format='%(asctime)s %(levelname)-8s %(message)s'
-                            , datefmt='%Y-%m-%d %H:%M:%S',
+                            format='%(asctime)s %(levelname)-8s %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S',
                             stream=sys.stdout)
 
         # Configure requests to show only WARNING messages
@@ -85,11 +85,10 @@ class hg(object):
             self._Config['Cuckoo'] = Cuckoo
             self._Config['Viper'] = Viper
 
-
         if self._getData:
             logging.info('Initializing HG')
         else:
-            logging.error('You must enable at least one module in the config file')
+            logging.error('You must enable at least one module in the config')
             sys.exit(-1)
 
     def LoadModules(self, Root, Directory):
@@ -99,8 +98,7 @@ class hg(object):
             for name in fnmatch.filter(names, '*.py'):
                 if name != '__init__.py':
                     name = '%s.%s' % (Directory, name.split('.py')[0])
-                    processor = __import__(name, globals(), locals(),
-                            [''])
+                    processor = __import__(name, globals(), locals(), [''])
                     components = name.split('.')[1:]
                     for com in components:
                         class_ = getattr(processor, com)
@@ -151,30 +149,26 @@ class hg(object):
                     if item.lower() == 'content-disposition':
                         UseDisp = True
                 if not UseDisp:
-                    filename = URL.split('/')[-1].split('#'
-                            )[0].split('?')[0]
-                    if filename == None:
+                    filename = URL.split('/')[-1].split('#')[0].split('?')[0]
+                    if filename is not None:
                         filename = URL.split('/')
                 else:
                     Disposition = re.headers['Content-Disposition']
                     try:
-                        filename = Disposition.split('filename='
-                                )[1].split('"')[1]
+                        filename = Disposition.split('filename=')[1].split('"')[1]
                     except Exception:
-                        filename = Disposition.split('filename='
-                                )[1].split('"')[0]
+                        filename = Disposition.split('filename=')[1].split('"')[0]
 
                 if len(filename) <= 0:
                     logging.debug(URL)
                     sys.exit(-1)
 
-                return dict({'filename': filename,
-                            'content': re.content,
+                return dict({'filename': filename, 'content': re.content,
                             'status_code': re.status_code})
             else:
                 return dict({'filename': None, 'content': None,
                             'status_code': re.status_code})
-        except Exception, e:
+        except Exception:
             return dict({'filename': None, 'content': None,
                         'status_code': '0'})  # 0 for timeout
         except KeyboardInterrupt:
@@ -186,16 +180,16 @@ class hg(object):
                 url = self._Fila.get(True, 5)
             except Queue.Empty:
                 continue
-   
+
             # If any module that need to download the URL is enable,
             # we stop here
-            if self._getData == False:
+            if self._getData is False:
                 return
 
             data = self.Fetch(url)
             if data['status_code'] == 200:
                 logging.info(url)
-            if data['content'] != None:
+            if data['content'] is not None:
                 fpath = self.SaveFile(data)
                 ftype = self.GetFileType(data['content'])
                 if os.path.getsize(fpath) > 0:
@@ -238,5 +232,3 @@ class hg(object):
             except KeyboardInterrupt:
                 logging.info('Shutdown HG')
                 self._End_Process = True
-
-

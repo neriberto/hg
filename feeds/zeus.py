@@ -7,7 +7,6 @@
 # See the file 'docs/LICENSE' for copying permission.
 
 from hg.core.feeds import Feeds
-from lxml import etree
 
 
 class zeus(Feeds):
@@ -21,4 +20,4 @@ class zeus(Feeds):
         except KeyboardInterrupt:
             pass
         except Exception as ex:
-            self.print_error(ex, content)
+            self.print_error(ex)
