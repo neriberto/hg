@@ -6,33 +6,15 @@
 # This file is part of HG - https://github.com/neriberto/hg
 # See the file 'docs/LICENSE' for copying permission.
 
+from hg.core.processors import Processors
 import logging
-import os
 import requests
 
 
-class cuckoo(object):
+class cuckoo(Processors):
 
-    TYPES = []
-
-    def __init__(self):
-        self.TYPES.append('application/x-dosexec')
-        self.TYPES.append('application/x-executable')
-        self.TYPES.append('application/pdf')
-        self.TYPES.append('application/msword')
-        self.TYPES.append('application/octet-stream')
-
-    def run(self, CONFIG, MD5, FULLPATH, FILETYPE):
-
-        try:
-            if CONFIG['Cuckoo']['Enabled'] == 'yes':
-                if FILETYPE in self.TYPES:
-                    cuckoo_conn = CONFIG['Cuckoo']['connection']
-                    if self.not_exist(MD5, cuckoo_conn):
-                        return self.add(cuckoo_conn, FULLPATH)
-        except Exception as e:
-            logging.error('Cuckoo:run %s' % e)
-            return False
+    Name = 'Cuckoo'
+    ADDURL = '%stasks/create/file'
 
     def not_exist(self, MD5, URL):
         try:
@@ -42,15 +24,4 @@ class cuckoo(object):
             return r.status_code == 404
         except Exception as e:
             logging.error('Cuckoo:not_exist %s' % e)
-            return False
-
-    def add(self, URL, fullpath):
-        try:
-            Files = {'file': (os.path.basename(fullpath),
-                     open(fullpath, 'rb'))}
-            URL_PATH = '%stasks/create/file' % URL
-            r = requests.post(URL_PATH, files=Files)
-            return r.status_code == 200
-        except Exception as e:
-            logging.error('Cuckoo:add %s' % e)
             return False
