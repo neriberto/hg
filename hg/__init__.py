@@ -192,9 +192,9 @@ class hg(object):
                 fpath = self.SaveFile(data['content'])
                 ftype = self.GetFileType(data['content'])
                 if os.path.getsize(fpath) > 0:
-                    MD5 = hashlib.md5(data['content']).hexdigest()
+                    # MD5 = hashlib.md5(data['content']).hexdigest()
                     for proc in self._Processors:
-                        proc.run(self._Config, MD5, fpath, ftype)
+                        proc.run(self._Config, fpath, ftype)
                 os.remove(fpath)
                 shutil.rmtree(os.path.dirname(os.path.abspath(fpath)))
             data = None

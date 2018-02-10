@@ -20,12 +20,11 @@ class Processors(object):
         self.TYPES.append('application/octect-stream')
         logging.info('Processor %s ready', self.Name)
 
-    def run(self, CONFIG, MD5, FULLPATH, FILETYPE):
+    def run(self, CONFIG, FULLPATH, FILETYPE):
         try:
             if CONFIG[self.Name]['Enabled'] == 'yes':
                 if FILETYPE in self.TYPES:
                     connection = CONFIG[self.Name]['connection']
-                    # if self.not_exist(MD5, connection):
                     return self.add(connection, FULLPATH)
         except Exception as ex:
             logging.error('%s:run %s' % self.Name, ex)
