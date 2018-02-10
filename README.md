@@ -10,25 +10,23 @@ Features
 --------
 
 * New sources may be added in a simple way, just creating a module in sub directory modules.
-* Is integrated with [VxCage](https://github.com/cuckoobox/vxcage), so it's focused only in get the samples. 
+* Is integrated with [VxCage](https://github.com/cuckoobox/vxcage), so it's focused only in get the samples.
 * Is integrated with [Cuckoo Sandbox](https://github.com/cuckoobox/cuckoo).
 
 Malware's Sources(Feeds):
 
 * [Malc0de](http://malc0de.com/)
-* [Malware Blacklist](http://www.malwareblacklist.com)
-* [Malware Domain List](http://www.malwaredomainlist.com/)
-* [Spyeye Tracker](https://spyeyetracker.abuse.ch/)
 * [VXvault](http://vxvault.siri-urz.net/)
-* [Zeus Tracker](https://zeustracker.abuse.ch/)
 
 Changelog
 ---------
 
 Version 0.1 (v0.1)
+
 * A stable version with 6 malware's sources
 
 Version 0.2 (v0.2)
+
 * Fixed many issues with malware's feeds
 * Changed log format
 * Working with threads
@@ -39,11 +37,15 @@ Requirements
 
 Python 2.7 is required to run HG. To install the project dependencies do this:
 
-	pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
 If you are using Debian/Ubuntu maybe you will need install some packages first:
 
-    apt-get install libxml2-dev libxslt1-dev python2.7-dev
+```bash
+apt-get install libxml2-dev libxslt1-dev python2.7-dev
+```
 
 Configuration
 -------------
@@ -53,17 +55,21 @@ the VxCage, then first is needed to install it.
 
 Configure HG using the hg.conf in conf directory, it is simple see below:
 
-	[vxcage]
-	enabled = yes
-	connection = http://localhost:8080/
+```ini
+[vxcage]
+enabled = yes
+connection = http://localhost:8080/
+```
 
 Now HG can send samples to [Cuckoo Sandbox](https://github.com/cuckoobox/cuckoo), in hg.conf you
 can configure this integration, just set the address for your cuckoo installation, remember, to do this you
 need to run the Cuckoo API, not the web interface, see configuration example bellow:
 
-	[cuckoo]
-	enable = yes
-	connection = http://localhost:8090/
+```ini
+[cuckoo]
+enable = yes
+connection = http://localhost:8090/
+```
 
 Contributions
 -------------
