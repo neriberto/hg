@@ -7,6 +7,7 @@
 # See the file 'docs/LICENSE' for copying permission.
 
 from hg.core.feeds import Feeds
+import logging
 
 
 class vxvault(Feeds):
@@ -29,4 +30,4 @@ class vxvault(Feeds):
         except KeyboardInterrupt:
             pass
         except Exception as ex:
-            self.print_error(ex, content)
+            logging.error(ex)
