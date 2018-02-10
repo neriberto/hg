@@ -94,15 +94,16 @@ class hg(object):
     def LoadModules(self, Root, Directory):
         Modules = []
         Walk_In = os.path.join(Root, Directory)
-        for (arg, dirname, names) in os.walk(Walk_In):
+        for (_, _, names) in os.walk(Walk_In):
             for name in fnmatch.filter(names, '*.py'):
-                if name != '__init__.py':
-                    name = '%s.%s' % (Directory, name.split('.py')[0])
-                    processor = __import__(name, globals(), locals(), [''])
-                    components = name.split('.')[1:]
-                    for com in components:
-                        class_ = getattr(processor, com)
-                        Modules.append(class_())
+                if name == '__init__.py':
+                    continue
+                name = '%s.%s' % (Directory, name.split('.py')[0])
+                processor = __import__(name, globals(), locals(), [''])
+                components = name.split('.')[1:]
+                for com in components:
+                    class_ = getattr(processor, com)
+                    Modules.append(class_())
         return Modules
 
     def SaveFile(self, data):
@@ -140,33 +141,34 @@ class hg(object):
     def Fetch(self, URL):
         try:
             headers = {'User-Agent': 'Mozilla/5.0'}
-            re = requests.get(URL, allow_redirects=True, timeout=100,
-                              headers=headers)
-            if re.status_code == 200:
-                UseDisp = False
-                for item in re.headers:
-                    if item.lower() == 'content-disposition':
-                        UseDisp = True
-                if not UseDisp:
-                    filename = URL.split('/')[-1].split('#')[0].split('?')[0]
-                    if filename is not None:
-                        filename = URL.split('/')
-                else:
-                    Disposition = re.headers['Content-Disposition']
-                    try:
-                        filename = Disposition.split('filename=')[1].split('"')[1]
-                    except Exception:
-                        filename = Disposition.split('filename=')[1].split('"')[0]
+            re = requests.get(URL, allow_redirects=True,
+                timeout=100, headers=headers)
 
-                if len(filename) <= 0:
-                    logging.debug(URL)
-                    sys.exit(-1)
+            if re.status_code != 200:
+                return dict({'filename': None, 'content': None, 'status_code': re.status_code})
 
-                return dict({'filename': filename, 'content': re.content,
-                            'status_code': re.status_code})
+            UseDisp = False
+            for item in re.headers:
+                if item.lower() == 'content-disposition':
+                    UseDisp = True
+            if not UseDisp:
+                filename = URL.split('/')[-1].split('#')[0].split('?')[0]
+                if filename is not None:
+                    filename = URL.split('/')
             else:
-                return dict({'filename': None, 'content': None,
-                            'status_code': re.status_code})
+                Disposition = re.headers['Content-Disposition']
+                try:
+                    filename = Disposition.split('filename=')[1].split('"')[1]
+                except Exception:
+                    filename = Disposition.split('filename=')[1].split('"')[0]
+
+            if len(filename) <= 0:
+                logging.debug(URL)
+                sys.exit(-1)
+
+            return dict({'filename': filename, 'content': re.content,
+                        'status_code': re.status_code})
+
         except Exception:
             return dict({'filename': None, 'content': None,
                         'status_code': '0'})  # 0 for timeout
@@ -188,15 +190,19 @@ class hg(object):
             data = self.Fetch(url)
             if data['status_code'] == 200:
                 logging.info(url)
-            if data['content'] is not None:
-                fpath = self.SaveFile(data['content'])
-                ftype = self.GetFileType(data['content'])
-                if os.path.getsize(fpath) > 0:
-                    # MD5 = hashlib.md5(data['content']).hexdigest()
-                    for proc in self._Processors:
-                        proc.run(self._Config, fpath, ftype)
-                os.remove(fpath)
-                shutil.rmtree(os.path.dirname(os.path.abspath(fpath)))
+
+            if data['content'] is None:
+                return
+
+            fpath = self.SaveFile(data['content'])
+            ftype = self.GetFileType(data['content'])
+            if os.path.getsize(fpath) <= 0:
+                return
+
+            for proc in self._Processors:
+                proc.run(self._Config, fpath, ftype)
+            os.remove(fpath)
+            shutil.rmtree(os.path.dirname(os.path.abspath(fpath)))
             data = None
             self._Fila.task_done()
 
