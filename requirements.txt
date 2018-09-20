@@ -1,5 +1,2 @@
-configparser==3.3.0r2
-requests==2.2.1
-python-magic
-libmagic==1.0
-feedparser
+asyncio==3.4.3
+git+https://github.com/neriberto/malwarefeeds
