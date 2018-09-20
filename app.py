@@ -5,6 +5,7 @@ import hashlib
 import os
 import sys
 import asyncio
+import click
 from requests import get
 from malwarefeeds.engine import Engine
 
@@ -30,7 +31,7 @@ def store_file(content):
 async def download_from_feeds(q):
     e = Engine()
     e.update()
-    for feed, url in e.read():
+    for _, url in e.read():
         await q.put(url)
 
     await q.put(None)
@@ -42,14 +43,23 @@ async def download_samples(q):
         if url is None:
             break
 
-        print("URL: %s" % url)
+        print("Downloading URL: %s" % url)
         r = get(url, stream=True)
         store_file(r.content)
         q.task_done()
 
 
-if __name__ == '__main__':
+@click.command()
+@click.option('--repo', default=SAMPLES_PATH, help='The directory to store files')
+def cli(repo):
     try:
+        if repo and os.path.isdir(repo):
+            SAMPLES_PATH = repo
+        else:
+            print("Directory inexistent %s" % repo)
+            sys.exit()
+
+        print("Storing files in %s" % SAMPLES_PATH)
         ioloop = asyncio.get_event_loop()
         q = asyncio.Queue(loop=ioloop)
         producer = download_from_feeds(q)
@@ -60,3 +70,6 @@ if __name__ == '__main__':
         sys.exit()
     except SystemExit:
         pass
+
+if __name__ == "__main__":
+    cli(None)
