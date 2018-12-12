@@ -11,9 +11,11 @@ HG uses the [malwarefeeds](https://github.com/neriberto/malwarefeeds), visit the
 Changelog
 ---------
 
-Version 0.1 (v0.1)
+Version 0.3 (v0.3)
 
-* A stable version with 6 malware's sources
+* Redesigned to be simple to install and usage
+* Doesn't have anymore integrations with other projects like [Cuckoo Sandbox](https://github.com/cuckoobox/cuckoo), Viper or VxCage
+* The downloaded samples are store in a directory
 
 Version 0.2 (v0.2)
 
@@ -22,11 +24,9 @@ Version 0.2 (v0.2)
 * Working with threads
 * Now running until kill by system or interrupted through keyboard(Ctrl+C)
 
-Version 0.3 (v0.3)
+Version 0.1 (v0.1)
 
-* Redesigned to be simple to install and usage
-* Doesn't have anymore integrations with other projects like [Cuckoo Sandbox](https://github.com/cuckoobox/cuckoo), Viper or VxCage
-* The downloaded samples are store in a directory
+* A stable version with 6 malware's sources
 
 Requirements
 ------------
