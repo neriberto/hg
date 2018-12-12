@@ -39,6 +39,7 @@ Install and Usage
 To install use the pip tool
 
 ```bash
+pip3 install git+https://github.com/neriberto/malwarefeeds.git#egg=malwarefeeds
 pip3 install git+https://github.com/neriberto/hg.git#egg=hg
 ```
 
