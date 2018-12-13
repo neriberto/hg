@@ -53,11 +53,11 @@ async def download_samples(q):
 @click.option('--repo', default=SAMPLES_PATH, help='The directory to store files')
 def cli(repo):
     try:
-        if repo and os.path.isdir(repo):
-            SAMPLES_PATH = repo
-        else:
-            print("Directory inexistent %s" % repo)
-            sys.exit()
+        if not os.path.isdir(repo):
+            print("Creating directory %s" % repo)
+            os.makedirs(repo)
+
+        SAMPLES_PATH = repo
 
         print("Storing files in %s" % SAMPLES_PATH)
         ioloop = asyncio.get_event_loop()
@@ -67,7 +67,9 @@ def cli(repo):
         ioloop.run_until_complete(asyncio.gather(producer, consumer))
         ioloop.close()
     except KeyboardInterrupt:
-        sys.exit()
+        pass
+    except PermissionError as ex:
+        print(ex)
     except SystemExit:
         pass
 
