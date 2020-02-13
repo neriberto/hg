@@ -1,4 +1,4 @@
 asyncio==3.4.3
-git+https://github.com/neriberto/malwarefeeds.git#egg=malwarefeeds
-requests==2.21.0
+git+https://github.com/neriberto/malwarefeeds.git@0.1.0#egg=malwarefeeds
+requests==2.22.0
 click==7.0
