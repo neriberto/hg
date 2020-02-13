@@ -1,18 +1,20 @@
-#!/usr/bin/python
+"""HG - Hazardous Garbage, a malware collector."""
+
 # -*- coding: utf-8 -*-
 
+import asyncio
 import hashlib
 import os
-import sys
-import asyncio
+
 import click
-from requests import get
 from malwarefeeds.engine import Engine
+from requests import get
 
 SAMPLES_PATH = os.path.expanduser('~/.samples')
 
 
-def store_file(content):
+def store_file(content: bytes):
+    """Store a file in hard drive."""
     fhash = hashlib.sha256(content).hexdigest()
     directory = os.path.join(
         SAMPLES_PATH,
@@ -29,15 +31,19 @@ def store_file(content):
 
 
 async def download_from_feeds(q):
-    e = Engine()
-    e.update()
-    for _, url in e.read():
+    """Download the feeds and put each url in queue."""
+    engine = Engine()
+    engine.download()
+    for _, url in engine.get_urls():
+        if not url.startswith('http://'):
+            url = f'http://{url}'
         await q.put(url)
 
     await q.put(None)
 
 
 async def download_samples(q):
+    """Get an URL from queue and try download it."""
     while True:
         url = await q.get()
         if url is None:
@@ -52,6 +58,7 @@ async def download_samples(q):
 @click.command()
 @click.option('--repo', default=SAMPLES_PATH, help='The directory to store files')
 def cli(repo):
+    """A command line parser."""
     try:
         if not os.path.isdir(repo):
             print("Creating directory %s" % repo)
@@ -72,6 +79,7 @@ def cli(repo):
         print(ex)
     except SystemExit:
         pass
+
 
 if __name__ == "__main__":
     cli(None)
