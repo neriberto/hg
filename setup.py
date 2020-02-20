@@ -1,37 +1,30 @@
 from setuptools import setup
 
-try:
-    from pip._internal.req import parse_requirements
-except ImportError:
-    from pip.req import parse_requirements
+with open('README.md') as readme_file:
+    readme = readme_file.read()
 
-
-links = []
-requires = []
-
-req_file = 'requirements.txt'
-requirements = parse_requirements(req_file, session=False)
-
-for item in requirements:
-    print(item)
-    if getattr(item, 'url', None):
-        links.append(str(item.url))
-    if getattr(item, 'link', None):
-        links.append(str(item.link))
-    if item.req:
-        requires.append(str(item.req))
-
-print(requires)
-print(links)
 setup(
     name="hg",
-    version='0.1',
-    py_modules=['app'],
-    install_requires=requires,
-    entry_points='''
-        [console_scripts]
-        hg=app:cli
-    ''',
-    dependency_links=links,
+    version='0.2.0',
+    description='',
+    long_description=readme,
+    packages=['hg'],
+    url='https://github.com/neriberto/hg',
+    license='BSD 3-Clause License',
+    author='Neriberto C. Prado',
+    author_email='neriberto@gmail.com',
+    dependency_links=[
+        "git+https://github.com/neriberto/malwarefeeds.git@develop#egg=malwarefeeds"
+    ],
+    install_requires=[
+        "asyncio==3.4.3",
+        "click==7.0",
+        "requests==2.22.0"
+    ],
+    entry_points={
+        "console_scripts": [
+            "hg=hg:cli"
+        ],
+    },
     zip_safe=False,
 )

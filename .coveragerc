@@ -1,0 +1,11 @@
+[run]
+branch = True
+omit =
+    tests/*
+
+[report]
+omit =
+    *venv*
+    *_test.py
+    *admin.py
+    *.tox*

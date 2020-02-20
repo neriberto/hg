@@ -2,6 +2,13 @@
 
 # -*- coding: utf-8 -*-
 
+__author__ = 'Neriberto C. Prado'
+__maintainer__ = 'Neriberto C. Prado'
+__email__ = 'neriberto@gmail.com'
+__license__ = 'BSD 3-Clause License'
+__version__ = '0.2.0'
+
+
 import asyncio
 import hashlib
 import os
@@ -92,7 +99,11 @@ class GarbageCollector:
 @click.command()
 @click.option('--repo', default='', help='The directory to store files')
 def cli(repo):
-    """A command line parser."""
+    """
+    HG - Hazardous Garbage, a malware collector.
+
+    Version: 0.2.0
+    """
     try:
         collector = GarbageCollector(repo=repo)
         collector.run()
@@ -102,7 +113,3 @@ def cli(repo):
         print(ex)
     except SystemExit:
         pass
-
-
-if __name__ == "__main__":
-    cli(None)
