@@ -1,4 +1,3 @@
-asyncio==3.4.3
 click==7.0
 git+https://github.com/neriberto/malwarefeeds.git@develop#egg=malwarefeeds
 requests==2.22.0

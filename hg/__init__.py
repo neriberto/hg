@@ -9,9 +9,9 @@ __license__ = 'BSD 3-Clause License'
 __version__ = '0.2.0'
 
 
-import asyncio
 import hashlib
 import os
+from queue import Queue
 
 import click
 from malwarefeeds.engine import Engine
@@ -23,6 +23,7 @@ class GarbageCollector:
 
     def __init__(self, repo: str):
         """Class construtor."""
+        self.queue = Queue()
         if repo and repo != '':
             self.repo = repo
         else:
@@ -30,15 +31,22 @@ class GarbageCollector:
 
     def store_file(self, content: bytes):
         """Store a file in hard drive."""
+        if not content or len(content) <= 0:
+            return
+
         file_hash = hashlib.sha256(content).hexdigest()
         directory = os.path.join(
             self.repo,
             file_hash[0],
             file_hash[1],
             file_hash[2],
-            file_hash[3])
+            file_hash[3]
+        )
 
         if not os.path.isdir(directory):
+            return
+
+        if os.path.isdir(directory) and not os.path.exists(directory):
             os.makedirs(directory)
 
         file_path = os.path.join(directory, file_hash)
@@ -53,37 +61,35 @@ class GarbageCollector:
             os.makedirs(self.repo)
 
         print("Storing files in %s" % self.repo)
-        io_loop = asyncio.get_event_loop()
-        q = asyncio.Queue(loop=io_loop)
-        producer = GarbageCollector.download_from_feeds(q)
-        consumer = self.download_samples(q)
-        io_loop.run_until_complete(asyncio.gather(producer, consumer))
-        io_loop.close()
+        self.download_from_feeds()
+        self.download_samples()
 
-    @staticmethod
-    async def download_from_feeds(q):
+    def download_from_feeds(self):
         """Download the feeds and put each url in queue."""
         engine = Engine()
         engine.download()
         for _, url in engine.get_urls():
+            if not url:
+                continue
+
             if not url.startswith('http://'):
                 url = f'http://{url}'
-            await q.put(url)
 
-        await q.put(None)
+            print(f'Queueing url: {url}')
+            self.queue.put(url)
 
-    async def download_samples(self, q):
+    def download_samples(self):
         """Get an URL from queue and try download it."""
-        while True:
-            url = await q.get()
-            if url is None:
-                break
+        while not self.queue.empty():
+            feed, url = self.queue.get()
+            if not url:
+                self.queue.task_done()
+                continue
 
             print("Downloading URL: %s" % url)
             content = GarbageCollector.download(url=url)
-            if content:
-                self.store_file(content)
-            q.task_done()
+            self.store_file(content)
+            self.queue.task_done()
 
     @staticmethod
     def download(url):
