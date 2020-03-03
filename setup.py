@@ -14,10 +14,9 @@ setup(
     author='Neriberto C. Prado',
     author_email='neriberto@gmail.com',
     dependency_links=[
-        "git+https://github.com/neriberto/malwarefeeds.git@develop#egg=malwarefeeds"
+        "https://github.com/neriberto/malwarefeeds/archive/0.2.0.tar.gz"
     ],
     install_requires=[
-        "asyncio==3.4.3",
         "click==7.0",
         "requests==2.22.0"
     ],
