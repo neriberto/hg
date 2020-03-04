@@ -56,11 +56,16 @@ class GarbageCollectorTestCase(TestCase):
     @mock.patch('hg.GarbageCollector.store_file')
     @mock.patch('hg.GarbageCollector.download')
     def test_download_samples(self, download, store_file):
+
+        # First run in a empty queue
+        self.collector.download_samples()
+
+        # Second, populate the queue and try again
         download.return_value = None
         urls = [
-            ('feed', 'http://my.url/'),
-            ('feed', 'my.url'),
-            ('feed', None)
+            'http://my.url/',
+            None,
+            'my.url'
         ]
 
         for url in urls:
@@ -86,3 +91,16 @@ class GarbageCollectorTestCase(TestCase):
         self.collector.store_file(
             content=b'buffer'
         )
+
+    @mock.patch('os.makedirs')
+    @mock.patch('hg.GarbageCollector.download_samples')
+    @mock.patch('hg.GarbageCollector.download_from_feeds')
+    def test_run(self, from_feeds, samples, makedirs):
+        self.collector.run()
+
+        from_feeds.assert_called()
+        samples.assert_called()
+
+        self.collector.repo = ''
+        self.collector.run()
+        makedirs.assert_called()

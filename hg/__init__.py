@@ -84,7 +84,7 @@ class GarbageCollector:
             url = self.queue.get()
             if not url:
                 self.queue.task_done()
-                continue
+                break
 
             print("Downloading URL: %s" % url)
             content = GarbageCollector.download(url=url)
