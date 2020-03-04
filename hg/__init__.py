@@ -81,7 +81,7 @@ class GarbageCollector:
     def download_samples(self):
         """Get an URL from queue and try download it."""
         while not self.queue.empty():
-            feed, url = self.queue.get()
+            url = self.queue.get()
             if not url:
                 self.queue.task_done()
                 continue
