@@ -41,35 +41,38 @@ class GarbageCollectorTestCase(TestCase):
         )
         self.assertIsNone(result)
 
+    @mock.patch('hg.head')
     @mock.patch('malwarefeeds.engine.Engine.download')
     @mock.patch('malwarefeeds.engine.Engine.get_urls')
-    def test_download_from_feeds(self, get_urls, download):
+    def test_download_from_feeds(self, get_urls, download, hg_head):
         get_urls.return_value = [
             ('feed', 'http://my.url/'),
             ('feed', 'my.url'),
             ('feed', None)
         ]
         self.collector.download_from_feeds()
+
         get_urls.assert_called()
         download.assert_called()
+        hg_head.assert_called()
 
     @mock.patch('hg.GarbageCollector.store_file')
     @mock.patch('hg.GarbageCollector.download')
     def test_download_samples(self, download, store_file):
-
         # First run in a empty queue
         self.collector.download_samples()
 
         # Second, populate the queue and try again
         download.return_value = None
-        urls = [
-            'http://my.url/',
-            None,
-            'my.url'
+
+        documents = [
+            (2, 'teste', 'http://my.url/'),
+            (1, 'teste', None),
+            (3, 'teste', 'my.url')
         ]
 
-        for url in urls:
-            self.collector.queue.put(url)
+        for document in documents:
+            self.collector.queue.put(document)
 
         self.collector.download_samples()
 

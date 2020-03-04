@@ -6,16 +6,16 @@ __author__ = 'Neriberto C. Prado'
 __maintainer__ = 'Neriberto C. Prado'
 __email__ = 'neriberto@gmail.com'
 __license__ = 'BSD 3-Clause License'
-__version__ = '0.2.0'
+__version__ = '0.4.0'
 
 
 import hashlib
 import os
-from queue import Queue
+from queue import PriorityQueue
 
 import click
 from malwarefeeds.engine import Engine
-from requests import get
+from requests import get, head
 
 
 class GarbageCollector:
@@ -23,7 +23,7 @@ class GarbageCollector:
 
     def __init__(self, repo: str):
         """Class construtor."""
-        self.queue = Queue()
+        self.queue = PriorityQueue()
         if repo and repo != '':
             self.repo = repo
         else:
@@ -68,26 +68,42 @@ class GarbageCollector:
         """Download the feeds and put each url in queue."""
         engine = Engine()
         engine.download()
-        for _, url in engine.get_urls():
-            if not url:
+        for feed_name, url in engine.get_urls():
+            if not url or not feed_name:
                 continue
 
             if not url.startswith('http://'):
                 url = f'http://{url}'
 
-            print(f'Queueing url: {url}')
-            self.queue.put(url)
+            try:
+                status_code = head(url, timeout=10).status_code
+
+                if status_code == 200:
+                    priority = 1
+                elif status_code == 404:
+                    priority = 3
+                else:
+                    priority = 2
+
+                self.queue.put((priority, feed_name, url))
+                print(f'URL: {url}, priority: {priority}')
+            except Exception as ex:
+                message = str(ex)
+                print(f'URL: {url}, error: {message}')
+                continue
 
     def download_samples(self):
         """Get an URL from queue and try download it."""
         while not self.queue.empty():
-            url = self.queue.get()
+            _, _, url = self.queue.get()
+
             if not url:
                 self.queue.task_done()
-                break
+                continue
 
-            print("Downloading URL: %s" % url)
-            content = GarbageCollector.download(url=url)
+            content = GarbageCollector.download(
+                url=url
+            )
             self.store_file(content)
             self.queue.task_done()
 
@@ -95,6 +111,7 @@ class GarbageCollector:
     def download(url):
         """Safe download that logs the exceptions."""
         try:
+            print("Downloading URL: %s" % url)
             r = get(url, stream=True)
             return r.content
         except Exception as ex:
