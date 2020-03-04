@@ -14,11 +14,12 @@ setup(
     author='Neriberto C. Prado',
     author_email='neriberto@gmail.com',
     dependency_links=[
-        "https://github.com/neriberto/malwarefeeds/archive/0.2.0.tar.gz"
+        'git+https://github.com/neriberto/malwarefeeds.git#egg=malwarefeeds-0.2.0'
     ],
     install_requires=[
         "click==7.0",
-        "requests==2.22.0"
+        "requests==2.22.0",
+        'malwarefeeds',
     ],
     entry_points={
         "console_scripts": [
