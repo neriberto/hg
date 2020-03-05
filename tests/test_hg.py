@@ -47,8 +47,7 @@ class GarbageCollectorTestCase(TestCase):
     def test_download_from_feeds(self, get_urls, download, hg_head):
         get_urls.return_value = [
             ('feed', 'http://my.url/'),
-            ('feed', 'my.url'),
-            ('feed', None)
+            ('feed', 'my.url')
         ]
         self.collector.download_from_feeds()
 
@@ -79,20 +78,25 @@ class GarbageCollectorTestCase(TestCase):
         download.assert_called()
         store_file.assert_called()
 
-    def test_store_file(self):
+    @mock.patch('hg.open')
+    @mock.patch('os.makedirs')
+    def test_store_file(self, makedirs, my_open):
         self.collector.repo = ''
+        content = None
 
         self.collector.store_file(
-            content=None
+            content=content
         )
 
+        content = b'buffer'
         self.collector.store_file(
-            content=b'buffer'
+            content=content
         )
 
         self.collector.repo = dirname(__file__)
+
         self.collector.store_file(
-            content=b'buffer'
+            content=content
         )
 
     @mock.patch('os.makedirs')

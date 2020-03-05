@@ -43,10 +43,7 @@ class GarbageCollector:
             file_hash[3]
         )
 
-        if not os.path.isdir(directory):
-            return
-
-        if os.path.isdir(directory) and not os.path.exists(directory):
+        if not os.path.exists(directory):
             os.makedirs(directory)
 
         file_path = os.path.join(directory, file_hash)
@@ -69,9 +66,6 @@ class GarbageCollector:
         engine = Engine()
         engine.download()
         for feed_name, url in engine.get_urls():
-            if not url or not feed_name:
-                continue
-
             if not url.startswith('http://'):
                 url = f'http://{url}'
 
